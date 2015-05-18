@@ -1,0 +1,13 @@
+---
+vagrant:
+  vm:
+    hostname: 'project.local.de'
+    memory: '1024'
+    cpus: '1'
+    provider: vmware_workstation
+
+config:
+  install-elasticsearch: 1
+
+
+

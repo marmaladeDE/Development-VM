@@ -1,0 +1,45 @@
+{
+  "name": "mayflower-php",
+  "version": "3.1.0",
+  "author": "Mayflower",
+  "summary": "Puppet module to manage PHP",
+  "license": "MIT",
+  "source": "https://github.com/Mayflower/puppet-php",
+  "project_page": "https://github.com/Mayflower/puppet-php",
+  "issues_url": "https://github.com/Mayflower/puppet-php/issues",
+  "description": "Puppet module that aims to manage PHP on every linux distribution with sane defaults and easy, hiera-friendly configuration",
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu"
+    },
+    {
+      "operatingsystem": "Debian"
+    },
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "SLES"
+    }
+  ],
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":"4.x"},
+    {"name":"puppetlabs/apt","version_requirement":"1.x"},
+    {"name":"puppetlabs/inifile","version_requirement":"1.x"},
+    {"name":"darin/zypprepo","version_requirement":"1.x"},
+    {"name":"example42/yum","version_requirement":"2.x"}
+  ]
+}
