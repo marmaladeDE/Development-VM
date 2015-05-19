@@ -1,0 +1,14 @@
+{
+  "name": "marmalade-vmsetup",
+  "version": "0.1.0",
+  "author": "marmalade GmbH",
+  "summary": "This module helps building a generic machine for web development.",
+  "license": "not licensed",
+  "source": "git@gitlab.marmalade.de:development-standards/vagrant-basic.git",
+  "project_page": "http://gitlab.marmalade.de/development-standards/vagrant-basic",
+  "issues_url": "http://gitlab.marmalade.de/development-standards/vagrant-basic",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
+  ]
+}
+

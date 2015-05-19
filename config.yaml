@@ -1,13 +1,16 @@
 ---
 vagrant:
   vm:
-    hostname: 'project.local.de'
+    hostname: "project.local.de"
     memory: '1024'
     cpus: '1'
-    provider: vmware_workstation
+    provider: virtualbox
 
 config:
-  install-elasticsearch: 1
+  php-version: 5.4
+  install-zendguardloader: true
+  install-ioncubeloader: true
+  install-elasticsearch: true
 
 
 

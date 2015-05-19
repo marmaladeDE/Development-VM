@@ -1,7 +1,7 @@
-if $yaml_values == undef { $yaml_values = loadyaml('/vagrant/config.yaml') }
-Exec { path => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin" ] }
+class vmsetup::elasticsearch () {
 
-if hash_key_equals($yaml_values['config'], 'install-elasticsearch', 1) {
+  Exec { path => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin" ] }
+
     exec { 'add_elasticsearch_key':
       command => 'curl -L --silent "https://packages.elasticsearch.org/GPG-KEY-elasticsearch" | sudo apt-key add -',
       unless  => 'apt-key list | grep -q elasticsearch'
@@ -20,7 +20,7 @@ if hash_key_equals($yaml_values['config'], 'install-elasticsearch', 1) {
         ensure => installed,
         require => [
             Apt::Source['elasticsearch.org'],
-            Package['java']
+            Package['oracle-java8-installer']
         ]
     }
 
