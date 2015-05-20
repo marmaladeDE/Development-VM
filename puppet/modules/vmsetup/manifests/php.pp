@@ -8,16 +8,19 @@ class vmsetup::php (
     '5.5': {
       $release = 'wheezy-php55'
       $install_apc = false
+      $install_xdebug = true
       $xdebug_path = 'xdebug.so'
     }
     '5.6': {
       $release = 'wheezy-php56'
       $install_apc = false
+      $install_xdebug = false
       $xdebug_path = 'xdebug.so'
     }
     default: {
       $release = 'wheezy'
       $install_apc = true
+      $install_xdebug = true
       $xdebug_path = '/usr/lib/php5/20100525/xdebug.so'
     }
   }
@@ -68,7 +71,6 @@ class vmsetup::php (
     "php5-mcrypt",
     "php5-mysqlnd",
     "php5-recode",
-    "php5-xdebug",
     "php5-xsl"
   ]:
     ensure  => latest,
@@ -79,14 +81,26 @@ class vmsetup::php (
       Package["httpd"]
     ]
   }
+
+  # php5-xdebug is currently not available for php 5.6 on debian wheezy
+  if $install_xdebug {
+    package { "php5-xdebug":
+      ensure  => latest,
+      notify  => Service["httpd"],
+      require => [
+        Apt::Source["dotdeb-wheezy"],
+        Exec["apt_update"]
+      ]
+    }
+  }
+
   if $install_apc {
     package { "php-apc":
         ensure  => latest,
         notify  => Service["httpd"],
         require => [
           Apt::Source["dotdeb-wheezy"],
-          Exec["apt_update"],
-          Package["httpd"]
+          Exec["apt_update"]
         ]
     }
   }
