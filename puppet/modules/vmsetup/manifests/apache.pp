@@ -1,4 +1,4 @@
-class vmsetup::apache ($hostname) {
+class vmsetup::apache ($hostname, $use_shared_folder) {
 
   $projectDir = "/srv/${hostname}"
   $docRoot = "${projectDir}/web"
@@ -16,18 +16,28 @@ class vmsetup::apache ($hostname) {
   include apache::mod::dir
   include apache::mod::rewrite
 
-  file { 'docroot' :
-    path    => $projectDir,
+  file { $projectDir:
     ensure  => directory,
     owner   => 'vagrant',
     group   => 'www-data',
     require => Package["httpd"]
   }
-  file { 'link-share':
-    path   => $docRoot,
-    ensure => link,
-    target => '/media/project/web',
-    force  => true
+
+  if $use_shared_folder {
+    file { $docRoot:
+      ensure => link,
+      target => '/media/project/web',
+      force  => true,
+      require => File[$projectDir]
+    }
+  }
+  else {
+    file { $docRoot:
+      ensure  => directory,
+      owner   => 'vagrant',
+      group   => 'www-data',
+      require => File[$projectDir]
+    }
   }
 
   apache::vhost{ 'webroot':
@@ -39,11 +49,20 @@ class vmsetup::apache ($hostname) {
     docroot_owner => 'vagrant',
     options  => "Indexes FollowSymLinks MultiViews",
     override => 'All',
+    access_log_file => "${hostname}-access.log",
+    error_log_file => "${hostname}-error.log",
     require  => [
-        File['docroot'],
-        File['link-share']
-     ],
+        File[$docRoot]
+    ],
     servername => $hostname
   }
+
+  exec { 'set apache umask':
+    command => 'echo umask 0002 >> /etc/apache2/envvars',
+    unless => "cat /etc/apache2/envvars | grep -q 'umask'",
+    require => Package['httpd'],
+    notify => Service['httpd']
+  }
+
 }
 

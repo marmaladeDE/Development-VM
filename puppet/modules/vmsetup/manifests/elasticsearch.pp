@@ -40,7 +40,7 @@ class vmsetup::elasticsearch () {
     }
 
     exec { 'elasticsearch::enable analysis-icu':
-        command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/elasticsearch-analysis-icu/2.4.2',
+        command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/elasticsearch-analysis-icu/2.4.3',
         unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'analysis-icu'",
         require => Package['elasticsearch'],
         notify => Service['elasticsearch']

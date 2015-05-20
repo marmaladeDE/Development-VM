@@ -1,20 +1,24 @@
 class vmsetup::php (
   $version = '5.4',
   $install_zendguardloader = true,
-  $install_ioncubeloader = false
+  $install_ioncubeloader = false,
+  $xdebug_remote_host = ''
 ) {
   case $version {
     '5.5': {
       $release = 'wheezy-php55'
       $install_apc = false
+      $xdebug_path = 'xdebug.so'
     }
     '5.6': {
       $release = 'wheezy-php56'
       $install_apc = false
+      $xdebug_path = 'xdebug.so'
     }
     default: {
       $release = 'wheezy'
       $install_apc = true
+      $xdebug_path = '/usr/lib/php5/20100525/xdebug.so'
     }
   }
 
@@ -49,6 +53,7 @@ class vmsetup::php (
     notify => Exec['apt_update']
   }
 
+  # php5-mhash and php5-json are provided by php5-common
   package {
   [
     "php-pear",
@@ -60,9 +65,7 @@ class vmsetup::php (
     "php5-gd",
     "php5-imagick",
     "php5-intl",
-    "php5-json",
     "php5-mcrypt",
-    "php5-mhash",
     "php5-mysqlnd",
     "php5-recode",
     "php5-xdebug",
@@ -100,10 +103,56 @@ class vmsetup::php (
   }
 
   if $install_zendguardloader {
-    include vmsetup::zendguardloader
+    class { "vmsetup::zendguardloader":
+      version => $version
+    }
   }
   if $install_ioncubeloader {
-    include vmsetup::ioncubeloader
+    class { "vmsetup::ioncubeloader":
+      version => $version
+    }
+  }
+
+  file { "/etc/php5/mods-available/custom.ini":
+    content => "[Date]
+date.timezone = Europe/Berlin
+
+[Custom]
+display_errors on
+max_post_size=32M
+upload_max_filesize=32M
+memory_limit=128M
+",
+    require => Package["php5"]
+  }
+
+  exec{ "php5enmod custom":
+    notify  => Service["httpd"],
+    require => File["/etc/php5/mods-available/custom.ini"]
+  }
+
+
+  file { "/etc/php5/mods-available/xdebug.ini":
+    content => "zend_extension=${xdebug_path}
+xdebug.cli_color=1
+xdebug.max_nesting_level=500
+xdebug.remote_enable=1
+xdebug.remote_host=${xdebug_remote_host}
+xdebug.var_display_max_children=512
+xdebug.var_display_max_data=2560
+xdebug.var_display_max_depth=200",
+    notify  => Service["httpd"],
+    require => Package["php5"]
+  }
+
+  if $version != '5.4' {
+    file { "/etc/php5/mods-available/opcache.ini":
+      content => "zend_extension=opcache.so
+opcache.enable=1
+opcache.cli_enable=1",
+      notify  => Service["httpd"],
+      require => Package["php5"]
+    }
   }
 
 }

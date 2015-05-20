@@ -6,7 +6,7 @@ require 'yaml'
 
 configValues = YAML.load_file("#{dir}/config.yaml")
 
-data = configValues['vagrant']
+data = configValues['config']
 
 Vagrant.require_version '>= 1.6.0'
 
@@ -15,20 +15,25 @@ Vagrant.configure('2') do |config|
   config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
 
   # set hostname
-  if data['vm']['hostname'].to_s.strip.length != 0
-    config.vm.hostname = "#{data['vm']['hostname']}"
+  if data['hostname'].to_s.strip.length != 0
+    config.vm.hostname = "#{data['hostname']}"
   else
     config.vm.hostname = "project.local.de"
   end
 
   # set private network ip
-  if data['vm']['private_network'].to_s != ''
-    config.vm.network 'private_network', ip: "#{data['vm']['network']['private_network']}"
+  if data['vm']['private_network_ip'].to_s != ''
+    network_ip = "#{data['vm']['private_network_ip']}"
+    xdebug_remote_host = "#{data['vm']['private_network_gateway']}"
   elsif data['vm']['provider'] == 'vmware_fusion' || data['vm']['provider'] == 'vmware_workstation'
-    config.vm.network 'private_network', ip: "192.168.33.100"
+    network_ip =  "192.168.33.100"
+    xdebug_remote_host = "192.168.33.1"
   else
-    config.vm.network 'private_network', ip: "192.168.42.100"
+    network_ip = "192.168.42.100"
+    xdebug_remote_host = "192.168.42.1"
   end
+
+  config.vm.network 'private_network', ip: network_ip
 
   # add shared folder
   config.vm.synced_folder "./", "/media/project", id: "web",
@@ -71,9 +76,7 @@ Vagrant.configure('2') do |config|
 
   config.vm.provision :puppet do |puppet|
     puppet.facter = {
-      'ssh_username'     => "#{ssh_username}",
-      'provisioner_type' => ENV['VAGRANT_DEFAULT_PROVIDER'],
-      'vm_target_key'    => 'vagrantfile-local',
+      'xdebug_remote_host' => xdebug_remote_host
     }
     puppet.manifests_path = "puppet/manifests"
     puppet.manifest_file  = "default.pp"
@@ -82,16 +85,6 @@ Vagrant.configure('2') do |config|
 
   end
 
-=begin
-  config.vm.provision :shell do |s|
-    s.path = 'puphpet/shell/execute-files.sh'
-    s.args = ['exec-once', 'exec-always']
-  end
-  config.vm.provision :shell, run: 'always' do |s|
-    s.path = 'puphpet/shell/execute-files.sh'
-    s.args = ['startup-once', 'startup-always']
-  end
-  config.vm.provision :shell, :path => 'puphpet/shell/important-notices.sh'
-=end
+  config.vm.post_up_message = "Your machine is reachable at IP: #{network_ip}"
 
 end

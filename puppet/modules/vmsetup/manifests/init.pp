@@ -38,9 +38,11 @@
 class vmsetup (
   $phpVersion = '5.4',
   $hostname,
+  $xdebug_remote_host,
   $install_zendguardloader = true,
   $install_ioncubeloader = false,
-  $install_elasticsearch = false
+  $install_elasticsearch = false,
+  $use_shared_folder     = true
 ) {
 
   class { 'apt':
@@ -58,12 +60,14 @@ class vmsetup (
 
   class { "vmsetup::php":
     version => $phpVersion,
+    xdebug_remote_host => $xdebug_remote_host,
     install_zendguardloader => $install_zendguardloader,
     install_ioncubeloader => $install_ioncubeloader
   }
 
   class { "vmsetup::apache":
-    hostname => $hostname
+    hostname => $hostname,
+    use_shared_folder => $use_shared_folder
   }
 
   class { "mysql::server":
@@ -72,6 +76,23 @@ class vmsetup (
 
   class { "mysql::client":
     require => Exec["apt_update"]
+  }
+
+  augeas { "set mysql bind-address":
+    changes => [
+      "set /files/etc/mysql/my.cnf/target[3]/bind-address 0.0.0.0"
+    ],
+    require => Service['mysqld']
+  }
+
+  file { "/home/vagrant/.my.cnf":
+    content => "[client]
+user=root
+password=root",
+    mode => 0600,
+    owner => 'vagrant',
+    group => 'vagrant',
+    require => Service["mysqld"]
   }
 
   contain vmsetup::java
@@ -107,47 +128,13 @@ class vmsetup (
       require => Exec["apt_update"]
   }
 
-#   file { "/etc/php5/mods-available/xdebug.ini":
-#     content => "zend_extension=xdebug.so
-# xdebug.cli_color=1
-# xdebug.max_nesting_level=500
-# xdebug.remote_enable=1
-# xdebug.remote_host=192.168.56.1
-# xdebug.var_display_max_children=512
-# xdebug.var_display_max_data=2560
-# xdebug.var_display_max_depth=200",
-#     notify  => Service["httpd"],
-#     require => Package["php5"]
-#   }
+  exec { "usermod -g www-data -aG vagrant vagrant": }
 
-#  file { "/etc/php5/mods-available/opcache.ini":
-#    content => "zend_extension=opcache.so
-#opcache.enable=1
-#opcache.cli_enable=1",
-#    notify  => Service["httpd"],
-#    require => Package["php5"]
-#  }
-#
-#  file { "/etc/php5/mods-available/date.ini":
-#    content => "[Date]
-#date.timezone = Europe/Berlin",
-#    notify  => Service["httpd"],
-#    require => Package["php5"]
-#  }
-#
-#  exec{ "php5enmod date":
-#    notify  => Service["httpd"],
-#    require => Package["php5"]
-#  }
-#
-#  file { "/etc/bash_completion.d/bash_aliases.sh":
-#    ensure  => file,
-#    content => "alias ls='ls --color=auto'
-#alias dir='ls -al'
-#alias grep='grep --color=auto'"
-#  }
-#
+  file { "/etc/bash_completion.d/bash_aliases":
+    ensure  => file,
+    content => "alias ls='ls --color=auto'
+alias dir='ls -al'
+alias grep='grep --color=auto'"
+  }
 
-#
-#  exec { "usermod -g www-data -aG vagrant vagrant": }
 }

@@ -12,12 +12,13 @@ class vmsetup::java {
 
   exec { 'add_webupd8_key':
     command => 'apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886',
-    unless  => 'apt-key list | grep -q webupd8',
+    unless  => 'apt-key list | grep -q EEA14886',
     notify => Exec['apt_update']
   }
 
   exec { 'accept oracle java license':
     command => 'echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections',
+    unless => "debconf-show oracle-java8-installer | grep -q 'shared/accepted-oracle-license-v1-1: true'",
     require => Exec['add_webupd8_key']
   }
 
