@@ -2,6 +2,7 @@
 
 ### Vagrant template
 .vagrant.d/
+.vagrant/
 
 .idea/
 
