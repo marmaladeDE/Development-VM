@@ -3,8 +3,14 @@ vagrant_home = (ENV['VAGRANT_HOME'].to_s.split.join.length > 0) ? ENV['VAGRANT_H
 vagrant_dot  = (ENV['VAGRANT_DOTFILE_PATH'].to_s.split.join.length > 0) ? ENV['VAGRANT_DOTFILE_PATH'] : "#{dir}/.vagrant"
 
 require 'yaml'
+require "#{dir}/lib/ruby/deep_merge.rb"
 
-configValues = YAML.load_file("#{dir}/config.yaml")
+configValues = YAML.load_file("#{dir}/../config/vm/config.yaml")
+
+if File.file?("#{dir}/../config/vm/config.local.yaml")
+  custom = YAML.load_file("#{dir}/../config/vm/config.local.yaml")
+  configValues.deep_merge!(custom)
+end
 
 data = configValues['config']
 
@@ -36,7 +42,7 @@ Vagrant.configure('2') do |config|
   config.vm.network 'private_network', ip: network_ip
 
   # add shared folder
-  config.vm.synced_folder "./", "/media/project", id: "web",
+  config.vm.synced_folder "../", "/media/project", id: "web",
     group: 'www-data', owner: 'vagrant', mount_options: ['dmode=775', 'fmode=664']
 
   config.vm.usable_port_range = (10200..10500)

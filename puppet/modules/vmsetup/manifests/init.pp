@@ -37,6 +37,7 @@
 #
 class vmsetup (
   $phpVersion = '5.4',
+  $webroot = 'web',
   $hostname,
   $xdebug_remote_host,
   $install_zendguardloader = true,
@@ -67,7 +68,8 @@ class vmsetup (
 
   class { "vmsetup::apache":
     hostname => $hostname,
-    use_shared_folder => $use_shared_folder
+    use_shared_folder => $use_shared_folder,
+    webroot => $webroot
   }
 
   class { "mysql::server":

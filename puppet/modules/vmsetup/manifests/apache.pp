@@ -1,7 +1,7 @@
-class vmsetup::apache ($hostname, $use_shared_folder) {
+class vmsetup::apache ($hostname, $use_shared_folder, $webroot) {
 
-  $projectDir = "/srv/${hostname}"
-  $docRoot = "${projectDir}/web"
+  $hostDir = "/srv/${hostname}"
+  $docRoot = "${hostDir}/web"
 
   class { "::apache":
     mpm_module    => "prefork",
@@ -16,7 +16,7 @@ class vmsetup::apache ($hostname, $use_shared_folder) {
   include apache::mod::dir
   include apache::mod::rewrite
 
-  file { $projectDir:
+  file { $hostDir:
     ensure  => directory,
     owner   => 'vagrant',
     group   => 'www-data',
@@ -26,9 +26,9 @@ class vmsetup::apache ($hostname, $use_shared_folder) {
   if $use_shared_folder {
     file { $docRoot:
       ensure => link,
-      target => '/media/project/web',
+      target => "/media/project/${webroot}",
       force  => true,
-      require => File[$projectDir]
+      require => File[$hostDir]
     }
   }
   else {
@@ -36,7 +36,7 @@ class vmsetup::apache ($hostname, $use_shared_folder) {
       ensure  => directory,
       owner   => 'vagrant',
       group   => 'www-data',
-      require => File[$projectDir]
+      require => File[$hostDir]
     }
   }
 
