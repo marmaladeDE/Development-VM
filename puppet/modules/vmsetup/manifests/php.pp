@@ -152,6 +152,7 @@ xdebug.cli_color=1
 xdebug.max_nesting_level=500
 xdebug.remote_enable=1
 xdebug.remote_host=${xdebug_remote_host}
+xdebug.idekey=PHPSTORM
 xdebug.var_display_max_children=512
 xdebug.var_display_max_data=2560
 xdebug.var_display_max_depth=200",

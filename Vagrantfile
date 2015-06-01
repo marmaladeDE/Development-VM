@@ -30,7 +30,10 @@ Vagrant.configure('2') do |config|
   # set private network ip
   if data['vm']['private_network_ip'].to_s != ''
     network_ip = "#{data['vm']['private_network_ip']}"
-    xdebug_remote_host = "#{data['vm']['private_network_gateway']}"
+    xdebug_remote_host = data['vm']['private_network_gateway'].to_s
+    if xdebug_remote_host == ''
+        xdebug_remote_host = xdebug_remote_host.gsub(/^(\d+)\.(\d+)\.(\d+)\.\d+/, '\1.\2.\3.1')
+    end
   elsif data['vm']['provider'] == 'vmware_fusion' || data['vm']['provider'] == 'vmware_workstation'
     network_ip =  "192.168.33.100"
     xdebug_remote_host = "192.168.33.1"
@@ -70,7 +73,7 @@ Vagrant.configure('2') do |config|
       v.vmx['numvcpus'] = "#{data['vm']['cpus']}"
       v.vmx['displayName'] = config.vm.hostname
     end
-	
+
     config.vm.provider :vmware_workstation do |v, override|
       v.vmx['memsize']  = "#{data['vm']['memory']}"
       v.vmx['numvcpus'] = "#{data['vm']['cpus']}"
