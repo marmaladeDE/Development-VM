@@ -109,10 +109,22 @@ password=root",
     notify   => Service['mysql']
   }
 
-  augeas { "set_umask":
+  augeas { "set umask":
     changes => [
       "set /files/etc/login.defs/UMASK 0002"
     ]
+  }
+
+  file_line { "set umask for existing users (interactive)":
+    path => "/etc/pam.d/common-session",
+    match => "session optional pam_umask.so",
+    line => "session optional pam_umask.so"
+  }
+
+  file_line { "set umask for existing users (non-interactive)":
+    path => "/etc/pam.d/common-session-noninteractive",
+    match => "session optional pam_umask.so",
+    line => "session optional pam_umask.so"
   }
 
   if $install_elasticsearch {
