@@ -17,8 +17,13 @@ data = configValues['config']
 Vagrant.require_version '>= 1.6.0'
 
 Vagrant.configure('2') do |config|
-  config.vm.box     = "puppetlabs/debian-7.8-64-puppet"
-  config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
+  if data['php-version'].to_s != '5.4'
+    config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
+    config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
+  else
+    config.vm.box     = "puppetlabs/debian-7.8-64-puppet"
+    config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
+  end
 
   # set hostname
   if data['hostname'].to_s.strip.length != 0

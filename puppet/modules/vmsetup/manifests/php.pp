@@ -6,18 +6,21 @@ class vmsetup::php (
 ) {
   case $version {
     '5.5': {
-      $release = 'wheezy-php55'
+      $dotdeb = false
+      $release = 'ppa:ondrej/php5'
       $install_apc = false
       $install_xdebug = true
       $xdebug_path = 'xdebug.so'
     }
     '5.6': {
-      $release = 'wheezy-php56'
+      $dotdeb = false
+      $release = 'ppa:ondrej/php5-5.6'
       $install_apc = false
-      $install_xdebug = false
+      $install_xdebug = true
       $xdebug_path = 'xdebug.so'
     }
-    default: {
+    '5.4': {
+      $dotdeb = true
       $release = 'wheezy'
       $install_apc = true
       $install_xdebug = true
@@ -25,35 +28,34 @@ class vmsetup::php (
     }
   }
 
-  $location     = 'http://packages.dotdeb.org'
-  $repos        = 'all'
-  $include_src  = false
-
   include '::apt'
 
-  apt::source { 'dotdeb-wheezy':
-    location    => $location,
-    release     => 'wheezy',
-    repos       => $repos,
-    include_src => $include_src,
-  }
+  if $dotdeb {
+    $location     = 'http://packages.dotdeb.org'
+    $repos        = 'all'
+    $include_src  = false
 
-  # wheezy-php55 requires both repositories to work correctly
-  # See: http://www.dotdeb.org/instructions/
-  if $release != 'wheezy' {
-    apt::source { "source_php_${release}":
+    apt::source { 'dotdeb-wheezy':
       location    => $location,
-      release     => $release,
+      release     => 'wheezy',
       repos       => $repos,
       include_src => $include_src,
     }
-  }
 
-  exec { 'add_dotdeb_key':
-    command => 'curl -L --silent "http://www.dotdeb.org/dotdeb.gpg" | apt-key add -',
-    unless  => 'apt-key list | grep -q dotdeb',
-    path    => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ],
-    notify => Exec['apt_update']
+    exec { 'add_dotdeb_key':
+      command => 'curl -L --silent "http://www.dotdeb.org/dotdeb.gpg" | apt-key add -',
+      unless  => 'apt-key list | grep -q dotdeb',
+      notify => Exec['apt_update']
+    }
+  } else {
+    package{ 'software-properties-common':
+      ensure => latest,
+    }
+    exec { 'ondrey:ppa' :
+      command => "add-apt-repository ${release}",
+      notify => Exec['apt_update'],
+      require => Package['software-properties-common']
+    }
   }
 
   # php5-mhash and php5-json are provided by php5-common
@@ -76,7 +78,6 @@ class vmsetup::php (
     ensure  => latest,
     notify  => Service["httpd"],
     require => [
-      Apt::Source["dotdeb-wheezy"],
       Exec["apt_update"],
       Package["httpd"]
     ]
@@ -88,7 +89,6 @@ class vmsetup::php (
       ensure  => latest,
       notify  => Service["httpd"],
       require => [
-        Apt::Source["dotdeb-wheezy"],
         Exec["apt_update"]
       ]
     }
@@ -99,8 +99,7 @@ class vmsetup::php (
         ensure  => latest,
         notify  => Service["httpd"],
         require => [
-          Apt::Source["dotdeb-wheezy"],
-          Exec["apt_update"]
+          Exec["apt_update"],
         ]
     }
   }
@@ -133,7 +132,7 @@ display_errors=on
 post_max_size=32M
 upload_max_filesize=32M
 memory_limit=128M
-max_execution_time = 300
+max_execution_time=300
 
 [Date]
 date.timezone = Europe/Berlin

@@ -34,6 +34,7 @@ class vmsetup::apache ($hostname, $use_shared_folder, $webroot) {
   else {
     file { $docRoot:
       ensure  => directory,
+      mode => 'ug+rwX',
       owner   => 'vagrant',
       group   => 'www-data',
       require => File[$hostDir]
