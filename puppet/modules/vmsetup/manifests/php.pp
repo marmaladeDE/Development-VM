@@ -128,14 +128,15 @@ class vmsetup::php (
   }
 
   file { "/etc/php5/mods-available/custom.ini":
-    content => "[Date]
-date.timezone = Europe/Berlin
-
-[Custom]
-display_errors on
-max_post_size=32M
+    content => "
+display_errors=on
+post_max_size=32M
 upload_max_filesize=32M
 memory_limit=128M
+max_execution_time = 300
+
+[Date]
+date.timezone = Europe/Berlin
 ",
     require => Package["php5"]
   }
