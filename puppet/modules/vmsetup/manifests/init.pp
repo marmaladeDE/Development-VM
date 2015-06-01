@@ -144,6 +144,8 @@ password=root",
 
   exec { "usermod -g www-data -aG vagrant vagrant": }
 
+  exec { 'echo "vagrant:vagrant" | chpasswd': }
+
   file { "/etc/bash_completion.d/bash_aliases":
     ensure  => file,
     content => "alias ls='ls --color=auto'
