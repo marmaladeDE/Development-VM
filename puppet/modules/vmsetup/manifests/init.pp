@@ -60,16 +60,16 @@ class vmsetup (
   }
 
   class { "vmsetup::php":
-    version => $phpVersion,
-    xdebug_remote_host => $xdebug_remote_host,
+    version                 => $phpVersion,
+    xdebug_remote_host      => $xdebug_remote_host,
     install_zendguardloader => $install_zendguardloader,
-    install_ioncubeloader => $install_ioncubeloader
+    install_ioncubeloader   => $install_ioncubeloader
   }
 
   class { "vmsetup::apache":
-    hostname => $hostname,
+    hostname          => $hostname,
     use_shared_folder => $use_shared_folder,
-    webroot => $webroot
+    webroot           => $webroot
   }
 
   class { "mysql::server":
@@ -84,16 +84,26 @@ class vmsetup (
     changes => [
       "set /files/etc/mysql/my.cnf/target[3]/bind-address 0.0.0.0"
     ],
-    require => Service['mysqld']
+    require => Service['mysqld'],
+    notify => Service['mysqld']
+  }
+
+  exec { "set MySQL-Root permissions for Host":
+    command => "mysql -uroot -proot -e \"GRANT ALL PRIVILEGES ON *.* TO root@$xdebug_remote_host IDENTIFIED BY 'root'\"",
+    onlyif  => "test -z $(mysql -sNe \"SELECT COUNT(*) FROM mysql.user WHERE Host = '$xdebug_remote_host' AND User = 'root'\")",
+    require => [
+      Package['mysql-server'],
+      Package['mysql-client']
+    ]
   }
 
   file { "/home/vagrant/.my.cnf":
     content => "[client]
 user=root
 password=root",
-    mode => 0600,
-    owner => 'vagrant',
-    group => 'vagrant',
+    mode    => 0600,
+    owner   => 'vagrant',
+    group   => 'vagrant',
     require => Service["mysqld"]
   }
 
@@ -116,15 +126,15 @@ password=root",
   }
 
   file_line { "set umask for existing users (interactive)":
-    path => "/etc/pam.d/common-session",
+    path  => "/etc/pam.d/common-session",
     match => "session optional pam_umask.so",
-    line => "session optional pam_umask.so"
+    line  => "session optional pam_umask.so"
   }
 
   file_line { "set umask for existing users (non-interactive)":
-    path => "/etc/pam.d/common-session-noninteractive",
+    path  => "/etc/pam.d/common-session-noninteractive",
     match => "session optional pam_umask.so",
-    line => "session optional pam_umask.so"
+    line  => "session optional pam_umask.so"
   }
 
   if $install_elasticsearch {
