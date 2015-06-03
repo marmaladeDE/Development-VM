@@ -84,8 +84,10 @@ class vmsetup (
     changes => [
       "set /files/etc/mysql/my.cnf/target[3]/bind-address 0.0.0.0"
     ],
-    require => Service['mysqld'],
-    notify => Service['mysqld']
+    require  => [
+      Package['mysql-server']
+    ],
+    notify => Service['mysql']
   }
 
   exec { "set MySQL-Root permissions for Host":
@@ -104,7 +106,7 @@ password=root",
     mode    => 0600,
     owner   => 'vagrant',
     group   => 'vagrant',
-    require => Service["mysqld"]
+    require => Package["mysql-client"]
   }
 
   contain vmsetup::java
