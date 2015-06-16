@@ -160,8 +160,7 @@ password=root",
 
   file { "/etc/bash_completion.d/bash_aliases":
     ensure  => file,
-    content => "alias ls='ls --color=auto'
-alias dir='ls -al'
+    content => "alias dir='ls -al' 
 alias grep='grep --color=auto'"
   }
 
