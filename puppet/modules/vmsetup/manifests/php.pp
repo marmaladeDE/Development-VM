@@ -127,16 +127,16 @@ class vmsetup::php (
   }
 
   file { "/etc/php5/mods-available/custom.ini":
-    content => "
-display_errors=on
-post_max_size=32M
-upload_max_filesize=32M
-memory_limit=128M
-max_execution_time=300
-
-[Date]
-date.timezone = Europe/Berlin
-",
+    content => join([
+      "display_errors=on",
+      "post_max_size=32M",
+      "upload_max_filesize=32M",
+      "memory_limit=128M",
+      "max_execution_time=300",
+      "",
+      "[Date]",
+      "date.timezone = Europe/Berlin"
+    ], "\n"),
     require => Package["php5"]
   }
 
@@ -147,24 +147,28 @@ date.timezone = Europe/Berlin
 
 
   file { "/etc/php5/mods-available/xdebug.ini":
-    content => "zend_extension=${xdebug_path}
-xdebug.cli_color=1
-xdebug.max_nesting_level=500
-xdebug.remote_enable=1
-xdebug.remote_host=${xdebug_remote_host}
-xdebug.idekey=PHPSTORM
-xdebug.var_display_max_children=512
-xdebug.var_display_max_data=2560
-xdebug.var_display_max_depth=200",
+    content => join([
+      "zend_extension=${xdebug_path}",
+      "xdebug.cli_color=1",
+      "xdebug.max_nesting_level=500",
+      "xdebug.remote_enable=1",
+      "xdebug.remote_host=${xdebug_remote_host}",
+      "xdebug.idekey=PHPSTORM",
+      "xdebug.var_display_max_children=512",
+      "xdebug.var_display_max_data=2560",
+      "xdebug.var_display_max_depth=200"
+    ], "\n"),
     notify  => Service["httpd"],
     require => Package["php5"]
   }
 
   if $version != '5.4' {
     file { "/etc/php5/mods-available/opcache.ini":
-      content => "zend_extension=opcache.so
-opcache.enable=1
-opcache.cli_enable=1",
+      content => join([
+        "zend_extension=opcache.so",
+        "opcache.enable=1",
+        "opcache.cli_enable=1"
+      ], "\n"),
       notify  => Service["httpd"],
       require => Package["php5"]
     }
