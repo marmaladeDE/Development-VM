@@ -49,6 +49,13 @@ Vagrant.configure('2') do |config|
 
   config.vm.network 'private_network', ip: network_ip
 
+  if data['vm'].has_key?('forwards')
+    data['vm']['forwards'].each { |forward|
+      config.vm.network :forwarded_port, host: forward['host'], guest: forward['guest']
+    }
+  end
+
+
   # add shared folder
   config.vm.synced_folder "../", "/media/project", id: "web",
     group: 'www-data', owner: 'vagrant', mount_options: ['dmode=775', 'fmode=664']
