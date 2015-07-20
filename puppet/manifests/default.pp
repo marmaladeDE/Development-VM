@@ -11,7 +11,7 @@ node default {
   if $install_ioncubeloader == undef {$install_ioncubeloader = $data['install-ioncubeloader']}
   if $use_shared_folder == undef {$use_shared_folder = $data['use-shared-folder']}
   if $webroot == undef {$webroot = $data['webroot']}
-  if $elastic_version == undef {$elastic_version = $data['elastic_version']}
+  if $elastic_version == undef {$elastic_version = $data['elastic-version']}
 
   class { "vmsetup":
     phpVersion => $phpVersion,

@@ -14,7 +14,7 @@ config:
   install-elasticsearch: true
   # which version of elastic should be installed [0.90 up to current, defaults to 1.4]
   # ATTENTION: If you've a tailing null you must put the version into single quotes!
-  elastic_version: '1.4'
+  elastic-version: '1.4'
   # create symlink from shared folder for webroot [true|false]
   use-shared-folder: true
   vm:
