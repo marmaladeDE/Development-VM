@@ -11,6 +11,7 @@ node default {
   if $install_ioncubeloader == undef {$install_ioncubeloader = $data['install-ioncubeloader']}
   if $use_shared_folder == undef {$use_shared_folder = $data['use-shared-folder']}
   if $webroot == undef {$webroot = $data['webroot']}
+  if $elastic_version == undef {$elastic_version = $data['elastic_version']}
 
   class { "vmsetup":
     phpVersion => $phpVersion,
@@ -20,6 +21,7 @@ node default {
     install_zendguardloader => $install_zendguardloader,
     install_ioncubeloader => $install_ioncubeloader,
     use_shared_folder => $use_shared_folder,
-    webroot => $webroot
+    webroot => $webroot,
+    elastic_version => $elastic_version
   }
 }

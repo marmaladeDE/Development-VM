@@ -10,21 +10,31 @@ class vmsetup::php (
       $release = 'ppa:ondrej/php5'
       $install_apc = false
       $install_xdebug = true
-      $xdebug_path = 'xdebug.so'
+      $mod_path = '/usr/lib/php5/20121212/'
+      $conf_path = '/etc/php5/mods-available/'
     }
     '5.6': {
       $dotdeb = false
       $release = 'ppa:ondrej/php5-5.6'
       $install_apc = false
       $install_xdebug = true
-      $xdebug_path = 'xdebug.so'
+      $mod_path = '/usr/lib/php5/20131226/'
+      $conf_path = '/etc/php5/mods-available/'
     }
     '5.4': {
       $dotdeb = true
       $release = 'wheezy'
       $install_apc = true
       $install_xdebug = true
-      $xdebug_path = '/usr/lib/php5/20100525/xdebug.so'
+      $mod_path = '/usr/lib/php5/20100525/'
+      $conf_path = '/etc/php5/mods-available/'
+    }
+    '5.3': {
+      $dotdeb = false
+      $install_apc = true
+      $install_xdebug = true
+      $mod_path = "/usr/lib/php5/20090626/"
+      $conf_path = '/etc/php5/conf.d/'
     }
   }
 
@@ -45,66 +55,66 @@ class vmsetup::php (
     exec { 'add_dotdeb_key':
       command => 'curl -L --silent "http://www.dotdeb.org/dotdeb.gpg" | apt-key add -',
       unless  => 'apt-key list | grep -q dotdeb',
-      notify => Exec['apt_update']
+      notify  => Exec['apt_update']
     }
   } else {
-    package{ 'software-properties-common':
-      ensure => latest,
-    }
-    exec { 'ondrey:ppa' :
-      command => "add-apt-repository ${release}",
-      notify => Exec['apt_update'],
-      require => Package['software-properties-common']
+    if $version > 5.3 {
+      package{ 'software-properties-common':
+        ensure => latest,
+      }
+      exec { 'ondrey:ppa' :
+        command => "add-apt-repository ${release}",
+        notify  => Exec['apt_update'],
+        require => Package['software-properties-common']
+      }
     }
   }
 
   # php5-mhash and php5-json are provided by php5-common
   package {
-  [
-    "php-pear",
-    "php5",
-    "php5-common",
-    "php5-cli",
-    "php5-curl",
-    "php5-dev",
-    "php5-gd",
-    "php5-imagick",
-    "php5-intl",
-    "php5-mcrypt",
-    "php5-mysqlnd",
-    "php5-recode",
-    "php5-xsl"
-  ]:
-    ensure  => latest,
-    notify  => Service["httpd"],
-    require => [
-      Exec["apt_update"],
-      Package["httpd"]
-    ]
-  }
-
-  # php5-xdebug is currently not available for php 5.6 on debian wheezy
-  if $install_xdebug {
-    package { "php5-xdebug":
+    [
+      "php-pear",
+      "php5",
+      "php5-common",
+      "php5-cli",
+      "php5-curl",
+      "php5-dev",
+      "php5-gd",
+      "php5-imagick",
+      "php5-intl",
+      "php5-mcrypt",
+      "php5-mysqlnd",
+      "php5-recode",
+      "php5-xsl"
+    ]:
       ensure  => latest,
       notify  => Service["httpd"],
       require => [
-        Exec["apt_update"]
+        Exec["apt_update"],
+        Package["httpd"]
       ]
-    }
+  }
+
+# php5-xdebug is currently not available for php 5.6 on debian wheezy
+  package { "php5-xdebug":
+    ensure  => latest,
+    notify  => Service["httpd"],
+    require => [
+      Exec["apt_update"]
+    ]
   }
 
   if $install_apc {
     package { "php-apc":
-        ensure  => latest,
-        notify  => Service["httpd"],
-        require => [
-          Exec["apt_update"],
-        ]
+      ensure  => latest,
+      notify  => Service["httpd"],
+      require => [
+        Exec["apt_update"],
+      ]
     }
   }
 
-  file { ["/usr/lib/php5/modules","/usr/lib/php5/modules/php${version}"]:
+  file { ["$mod_path"]:
     ensure  => directory,
     recurse => true,
     owner   => 'vagrant',
@@ -117,16 +127,20 @@ class vmsetup::php (
 
   if $install_zendguardloader {
     class { "vmsetup::zendguardloader":
-      version => $version
+      version => $version,
+      mod_path => $mod_path,
+      conf_path => $conf_path
     }
   }
   if $install_ioncubeloader {
     class { "vmsetup::ioncubeloader":
-      version => $version
+      version => $version,
+      mod_path => $mod_path,
+      conf_path => $conf_path
     }
   }
 
-  file { "/etc/php5/mods-available/custom.ini":
+  file { "$conf_path/custom.ini":
     content => join([
       "display_errors=on",
       "post_max_size=32M",
@@ -140,15 +154,17 @@ class vmsetup::php (
     require => Package["php5"]
   }
 
-  exec{ "php5enmod custom":
-    notify  => Service["httpd"],
-    require => File["/etc/php5/mods-available/custom.ini"]
+  if $version > 5.3 {
+    exec{ "php5enmod custom":
+      notify  => Service["httpd"],
+      require => File["$conf_path/custom.ini"]
+    }
   }
 
 
-  file { "/etc/php5/mods-available/xdebug.ini":
+  file { "$conf_path/xdebug.ini":
     content => join([
-      "zend_extension=${xdebug_path}",
+      "zend_extension=$mod_path/xdebug.so",
       "xdebug.cli_color=1",
       "xdebug.max_nesting_level=500",
       "xdebug.remote_enable=1",
@@ -162,10 +178,10 @@ class vmsetup::php (
     require => Package["php5"]
   }
 
-  if $version != '5.4' {
-    file { "/etc/php5/mods-available/opcache.ini":
+  if $version > 5.4 {
+    file { "$conf_path/opcache.ini":
       content => join([
-        "zend_extension=opcache.so",
+        "zend_extension=$mod_path/opcache.so",
         "opcache.enable=1",
         "opcache.cli_enable=1"
       ], "\n"),

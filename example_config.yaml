@@ -4,7 +4,7 @@ config:
   hostname: 'project.local'
   # project folder that is linked to docroot
   webroot: 'web'
-  # php-version possible options  ['5.4'|'5.5'|'5.6']
+  # php-version possible options  ['5.3'|'5.4'|'5.5'|'5.6']
   php-version: '5.5'
   # should zend guard loader be installed [true|false]
   install-zendguardloader: true
@@ -12,6 +12,9 @@ config:
   install-ioncubeloader: true
   # should elasticsearch be installed [true|false]
   install-elasticsearch: true
+  # which version of elastic should be installed [0.90 up to current, defaults to 1.4]
+  # ATTENTION: If you've a tailing null you must put the version into single quotes!
+  elastic_version: '1.4'
   # create symlink from shared folder for webroot [true|false]
   use-shared-folder: true
   vm:
@@ -22,6 +25,4 @@ config:
     # cpus assigned to vm
     cpus: '1'
     # customize network ip default is 192.168.42.100 for virtualbox and 192.168.33.100 for vmware
-    #private_network_ip: 192.168.42.110
-    # network gateway used for xdebug.remote_host setting
-    #private_network_gateway: 192.168.42.1
+    private_network_ip: 192.168.42.110

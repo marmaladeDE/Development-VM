@@ -43,7 +43,8 @@ class vmsetup (
   $install_zendguardloader = true,
   $install_ioncubeloader = false,
   $install_elasticsearch = false,
-  $use_shared_folder     = true
+  $use_shared_folder     = true,
+  $elastic_version = 1.4
 ) {
 
   class { 'apt':
@@ -140,7 +141,9 @@ password=root",
   }
 
   if $install_elasticsearch {
-    include vmsetup::elasticsearch
+    class { "vmsetup::elasticsearch":
+      version => $elastic_version
+    }
   }
 
   package {
