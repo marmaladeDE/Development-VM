@@ -97,6 +97,10 @@ Vagrant.configure('2') do |config|
   end
 
   ssh_username = 'vagrant'
+  $modulePaths = ["puppet/modules"]
+  if File.directory?("../config/vm/puppet/modules")
+    $modulePaths.push("../config/vm/puppet/modules")
+  end
 
   config.vm.provision :puppet do |puppet|
     puppet.facter = {
@@ -104,7 +108,7 @@ Vagrant.configure('2') do |config|
     }
     puppet.manifests_path = "puppet/manifests"
     puppet.manifest_file  = "default.pp"
-    puppet.module_path    = "puppet/modules"
+    puppet.module_path    = $modulePaths
     puppet.options = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
 
   end
