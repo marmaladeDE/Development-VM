@@ -8,7 +8,7 @@ class vmsetup::ioncubeloader ($mod_path, $conf_path, $version = 5.4) {
   file { "$conf_path/ioncube.ini":
     ensure  => present,
     content => "; priority=00
-zend_extension=IoncubeLoader.so",
+zend_extension=$mod_path/IoncubeLoader.so",
     notify  => Service["httpd"],
     require => [
       Package["php5"],
