@@ -36,7 +36,7 @@ zend_loader.disable_licensing=0",
       changes => [
         "set /files$conf_path/opcache.ini/.anon/zend_extension = $mod_path/opcache_zgl.so"
       ],
-      require => File["$mod_path/opcach_zgl.so"]
+      require => File["$mod_path/opcache_zgl.so"]
     }
   }
 }
