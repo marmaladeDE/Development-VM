@@ -20,12 +20,15 @@ Vagrant.configure('2') do |config|
   if data['php-version'].to_s == '5.3'
     config.vm.box     = "puppetlabs/ubuntu-12.04-64-puppet"
     config.vm.box_url = "puppetlabs/ubuntu-12.04-64-puppet"
+    config.vm.box_version = "1.0.1"
   elsif data['php-version'].to_s == '5.4'
     config.vm.box     = "puppetlabs/debian-7.8-64-puppet"
     config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
+    config.vm.box_version = "1.0.2"
   else
     config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
     config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
+    config.vm.box_version = "1.0.1"
   end
 
   # set hostname
