@@ -16,10 +16,12 @@ ROOTDIR
 --- config.yaml [copy from example_config.yaml with your settings] 
 
 ## User and Passwords
+
 __SSH:__ vagrant / vagrant
+
 __MYSQL:__ root / root
 
-## Issues / Help
+## Issues and Help
 
 ### SSH connection fails
 
@@ -54,6 +56,5 @@ Error:
 
 Solution:
 
-Please DONT'T use in the config.yaml not the Top Level Domain ".dev" or ".local" as this is somehow reserved in newer versions of vagrant.
-anderes verzeichnis
+Please DON'T use in the config.yaml not the Top Level Domain ".dev" or ".local" as this is somehow reserved in newer versions of vagrant.
 
