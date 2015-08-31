@@ -27,7 +27,7 @@ __MYSQL:__ root / root
 
 ### SSH connection fails
 
-Error:
+__Error:__
 
 If you get an error like
 ``` 
@@ -40,13 +40,13 @@ you've probably have
 * an anti virus programm with an firewall running
 * hyperv running and blocking
 
-Solution:
+__Solution:__
 
 Turn it off an test it again.
 
 ### merge_yaml Error
 
-Error:
+__Error:__
 
 ``` 
   ==> default: Error: Could not autoload puppet/parser/functions/merge_yaml: cannot load such file -- active_support on node localhost
@@ -56,7 +56,7 @@ Error:
   went wrong.
 ```
 
-Solution:
+__Solution:__
 
 Please DON'T use in the config.yaml not the Top Level Domain ".dev" or ".local" as this is somehow reserved in newer versions of vagrant.
 
