@@ -7,6 +7,7 @@ Make sure you have vagrant and virtualbox installed on your machine.
 
 Setup the structure like
 
+``` 
 ROOTDIR
 - YOUR_PROJECT_FILES
 - vm
@@ -14,6 +15,7 @@ ROOTDIR
 - config
 -- vm
 --- config.yaml [copy from example_config.yaml with your settings] 
+``` 
 
 ## User and Passwords
 
