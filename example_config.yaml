@@ -1,7 +1,7 @@
 ---
 config:
   # hostname setting
-  hostname: 'project.local'
+  hostname: 'my.project'
   # project folder that is linked to docroot
   webroot: 'web'
   # php-version possible options  ['5.3'|'5.4'|'5.5'|'5.6']
