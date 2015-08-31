@@ -9,12 +9,13 @@ Setup the structure like
 
 ``` 
 ROOTDIR
-- YOUR_PROJECT_FILES
-- vm
--- HERE_THE_CONTENT_OF_THIS_REPO
 - config
 -- vm
---- config.yaml [copy from example_config.yaml with your settings] 
+--- config.yaml [copy from THIS_REPO/example_config.yaml with your settings]
+- vm
+-- HERE_THE_CONTENT_OF_THIS_REPO
+- web
+-- YOUR_PROJECT_FILES_HERE
 ``` 
 
 ## User and Passwords
