@@ -73,22 +73,19 @@ class vmsetup (
     webroot           => $webroot
   }
 
-  class { "mysql::server":
-    require => Exec["apt_update"]
+  $override_options = {
+    'mysqld' => {
+      'bind-address' => "0.0.0.0",
+    }
+  }
+
+  class { 'mysql::server':
+    override_options => $override_options,
+    require          => Exec["apt_update"]
   }
 
   class { "mysql::client":
     require => Exec["apt_update"]
-  }
-
-  augeas { "set mysql bind-address":
-    changes => [
-      "set /files/etc/mysql/my.cnf/target[3]/bind-address 0.0.0.0"
-    ],
-    require  => [
-      Package['mysql-server']
-    ],
-    notify => Service['mysql']
   }
 
   exec { "set MySQL-Root permissions for Host":
@@ -168,7 +165,7 @@ password=root",
       "alias ll='ls -lF'",
       "alias dir='ls -al'",
       "alias grep='grep --color=auto'"
-	], "\n")
+    ], "\n")
   }
 
 }
