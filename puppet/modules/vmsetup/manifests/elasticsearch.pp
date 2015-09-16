@@ -29,8 +29,36 @@ class vmsetup::elasticsearch ($version = 1.4) {
         hasrestart => true,
         hasstatus => true,
         enable => true,
-        require => Package['elasticsearch']
+        require => Package['elasticsearch'],
     }
+
+    exec { 'elasticsearch::enable marvel':
+      command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest',
+      unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'marvel'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+    exec { 'elasticsearch::disable marrvel agent':
+      command => 'echo marvel.agent.enabled: false >> /etc/elasticsearch/elasticsearch.yml',
+      unless  => "cat /etc/elasticsearch/elasticsearch.yml | grep -q 'marvel.agent.enabled: false'",
+      require => [Package['elasticsearch'], Exec['elasticsearch::enable marvel']],
+      notify  => Service['elasticsearch'],
+    }
+
+    exec { 'elasticsearch::enable head':
+      command => '/usr/share/elasticsearch/bin/plugin -i mobz/elasticsearch-head',
+      unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'head'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+
+    exec { 'elasticsearch::enable HQ':
+      command => '/usr/share/elasticsearch/bin/plugin -i royrusso/elasticsearch-HQ',
+      unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'HQ'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+
 
     if $version >= 1.4 {
       exec { 'elasticsearch::enable mvel':
