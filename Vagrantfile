@@ -17,18 +17,26 @@ data = configValues['config']
 Vagrant.require_version '>= 1.6.0'
 
 Vagrant.configure('2') do |config|
-  if data['php-version'].to_s == '5.3'
-    config.vm.box     = "puppetlabs/ubuntu-12.04-64-puppet"
-    config.vm.box_url = "puppetlabs/ubuntu-12.04-64-puppet"
-    config.vm.box_version = "1.0.1"
-  elsif data['php-version'].to_s == '5.4'
-    config.vm.box     = "puppetlabs/debian-7.8-64-puppet"
-    config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
-    config.vm.box_version = "1.0.2"
+  if data['vm'].has_key?('box') != ''
+    config.vm.box     = data['vm']['box'].to_s
+    config.vm.box_url = data['vm']['box'].to_s
+    if data['vm'].has_key?('box-version')
+      config.vm.box_version = data['vm']['box-version'].to_s
+    end
   else
-    config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
-    config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
-    config.vm.box_version = "1.0.1"
+    if data['php-version'].to_s == '5.3'
+      config.vm.box     = "puppetlabs/ubuntu-12.04-64-puppet"
+      config.vm.box_url = "puppetlabs/ubuntu-12.04-64-puppet"
+      config.vm.box_version = "1.0.1"
+    elsif data['php-version'].to_s == '5.4'
+      config.vm.box     = "puppetlabs/debian-7.8-64-puppet"
+      config.vm.box_url = "puppetlabs/debian-7.8-64-puppet"
+      config.vm.box_version = "1.0.2"
+    else
+      config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
+      config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
+      config.vm.box_version = "1.0.1"
+    end
   end
 
   # set hostname
@@ -103,6 +111,10 @@ Vagrant.configure('2') do |config|
   $modulePaths = ["puppet/modules"]
   if File.directory?("../config/vm/puppet/modules")
     $modulePaths.push("../config/vm/puppet/modules")
+  end
+
+  if data.has_key?('pre-puppet')
+    config.vm.provision 'shell', inline: data['pre-puppet'].join("\n")
   end
 
   config.vm.provision :puppet do |puppet|

@@ -12,6 +12,7 @@ node default {
   if $use_shared_folder == undef { $use_shared_folder = $data['use-shared-folder'] }
   if $webroot == undef { $webroot = $data['webroot'] }
   if $elastic_version == undef { $elastic_version = $data['elastic-version'] }
+  if $install_mysql == undef { $install_mysql = $data['install-mysql'] }
 
   class { "vmsetup":
     phpVersion              => $phpVersion,
@@ -22,7 +23,8 @@ node default {
     install_ioncubeloader   => $install_ioncubeloader,
     use_shared_folder       => $use_shared_folder,
     webroot                 => $webroot,
-    elastic_version         => $elastic_version
+    elastic_version         => $elastic_version,
+    install_mysql           => $install_mysql
   }
 
   if defined("vmcustoms") {
