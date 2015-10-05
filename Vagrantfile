@@ -17,7 +17,7 @@ data = configValues['config']
 Vagrant.require_version '>= 1.6.0'
 
 Vagrant.configure('2') do |config|
-  if data['vm'].has_key?('box') != ''
+  if data['vm'].has_key?('box')
     config.vm.box     = data['vm']['box'].to_s
     config.vm.box_url = data['vm']['box'].to_s
     if data['vm'].has_key?('box-version')
