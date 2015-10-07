@@ -24,6 +24,9 @@ __SSH:__ vagrant / vagrant
 
 __MYSQL:__ root / root
 
+## Tools
+You could reach the Elasticsearch HEAD-Plugin via http://YOURIP:9200/_plugin/head/
+
 ## Issues and Help
 
 ### SSH connection fails
