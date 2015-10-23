@@ -32,11 +32,14 @@ zend_loader.disable_licensing=0",
       require => File["$mod_path"]
     }
 
-    augeas { "change opcache binary":
-      changes => [
-        "set /files$conf_path/opcache.ini/.anon/zend_extension = $mod_path/opcache_zgl.so"
-      ],
-      require => File["$mod_path/opcache_zgl.so"]
+    file { "$conf_path/opcache.ini":
+      content => join([
+        "zend_extension=$mod_path/opcache_zgl.so",
+        "opcache.enable=1",
+        "opcache.cli_enable=1"
+      ], "\n"),
+      notify  => Service["httpd"],
+      require => [Package["php5"], File["$mod_path/opcache_zgl.so"]]
     }
   }
 }

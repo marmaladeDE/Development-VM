@@ -179,7 +179,7 @@ class vmsetup::php (
     require => Package["php5"]
   }
 
-  if $version > 5.4 {
+  if ($version > 5.4 and !$install_zendguardloader) {
     file { "$conf_path/opcache.ini":
       content => join([
         "zend_extension=$mod_path/opcache.so",

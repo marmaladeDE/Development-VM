@@ -51,7 +51,7 @@ Vagrant.configure('2') do |config|
     network_ip = "#{data['vm']['private_network_ip']}"
     xdebug_remote_host = data['vm']['private_network_gateway'].to_s
     if xdebug_remote_host == ''
-        xdebug_remote_host = xdebug_remote_host.gsub(/^(\d+)\.(\d+)\.(\d+)\.\d+/, '\1.\2.\3.1')
+        xdebug_remote_host = network_ip.gsub(/^(\d+\.\d+\.\d+)\.\d+/, '\1.1')
     end
   elsif data['vm']['provider'] == 'vmware_fusion' || data['vm']['provider'] == 'vmware_workstation'
     network_ip =  "192.168.33.100"
