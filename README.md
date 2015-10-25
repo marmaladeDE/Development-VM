@@ -64,3 +64,20 @@ __Solution:__
 
 Please DON'T use in the config.yaml not the Top Level Domain ".dev" or ".local" as this is somehow reserved in newer versions of vagrant.
 
+### Forwarding Ports ###
+
+If you want to access your box from other computers in the network, you might want to forward Ports from the Box.
+Thats easy.
+
+__Solution:__
+
+Specify the array vm.forwards like shown in the following example whre we forward the ports 80 and 9200
+```
+    forwards:
+      - apache:
+        host: 80
+        guest: 80
+      - elasticsearch
+        host: 9200
+        guest: 9200
+```
