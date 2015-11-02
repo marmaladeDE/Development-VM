@@ -61,7 +61,6 @@ class vmsetup::php (
     if $version > 5.3 {
       package{ 'software-properties-common':
         ensure => latest,
-        require => Exec['apt_update']
       }
       exec { 'ondrey:ppa' :
         command => "add-apt-repository ${release}",

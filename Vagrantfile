@@ -113,6 +113,8 @@ Vagrant.configure('2') do |config|
     $modulePaths.push("../config/vm/puppet/modules")
   end
 
+  config.vm.provision 'shell', inline: "apt-get update"
+
   if data.has_key?('pre-puppet')
     config.vm.provision 'shell', inline: data['pre-puppet'].join("\n")
   end
