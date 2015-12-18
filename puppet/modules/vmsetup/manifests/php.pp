@@ -12,14 +12,16 @@ class vmsetup::php (
       $install_xdebug = true
       $mod_path = '/usr/lib/php5/20121212/'
       $conf_path = '/etc/php5/mods-available/'
+      $php_prefix = "php5"
     }
     '5.6': {
       $dotdeb = false
-      $release = 'ppa:ondrej/php5-5.6'
+      $release = 'ppa:ondrej/php'
       $install_apc = false
       $install_xdebug = true
-      $mod_path = '/usr/lib/php5/20131226/'
-      $conf_path = '/etc/php5/mods-available/'
+      $mod_path = '/usr/lib/php/20131226/'
+      $conf_path = '/etc/php/mods-available/'
+      $php_prefix = "php5.6"
     }
     '5.4': {
       $dotdeb = true
@@ -28,6 +30,7 @@ class vmsetup::php (
       $install_xdebug = true
       $mod_path = '/usr/lib/php5/20100525/'
       $conf_path = '/etc/php5/mods-available/'
+      $php_prefix = "php5"
     }
     '5.3': {
       $dotdeb = false
@@ -35,6 +38,18 @@ class vmsetup::php (
       $install_xdebug = true
       $mod_path = "/usr/lib/php5/20090626/"
       $conf_path = '/etc/php5/conf.d/'
+      $php_prefix = "php5"
+    }
+    '7.0': {
+      $dotdeb = false
+      $release = 'ppa:ondrej/php'
+      $install_apc = false
+      $install_xdebug = true
+      $skip_zendguardloader = true
+      $skip_ioncubeloader = true
+      $mod_path = '/usr/lib/php/20151012'
+      $conf_path = '/etc/php/mods-available/'
+      $php_prefix = "php7.0"
     }
   }
 
@@ -74,18 +89,15 @@ class vmsetup::php (
   package {
     [
       "php-pear",
-      "php5",
-      "php5-common",
-      "php5-cli",
-      "php5-curl",
-      "php5-dev",
-      "php5-gd",
-      "php5-imagick",
-      "php5-intl",
-      "php5-mcrypt",
-      "php5-mysqlnd",
-      "php5-recode",
-      "php5-xsl"
+      "$php_prefix",
+      "$php_prefix-common",
+      "$php_prefix-cli",
+      "$php_prefix-curl",
+      "$php_prefix-dev",
+      "$php_prefix-gd",
+      "$php_prefix-intl",
+      "$php_prefix-mcrypt",
+      "$php_prefix-recode"
     ]:
       ensure  => latest,
       notify  => Service["httpd"],
@@ -94,14 +106,42 @@ class vmsetup::php (
         Package["httpd"]
       ]
   }
+  if $version < 5.6 {
+    package {
+      [
+        "$php_prefix-imagick",
+        "$php_prefix-mysqlnd",
+        "$php_prefix-xsl"
+      ]:
+        ensure  => latest,
+        notify  => Service["httpd"],
+        require => [
+          Exec["apt_update"],
+          Package["httpd"]
+        ]
+    }
 
-# php5-xdebug is currently not available for php 5.6 on debian wheezy
-  package { "php5-xdebug":
-    ensure  => latest,
-    notify  => Service["httpd"],
-    require => [
-      Exec["apt_update"]
-    ]
+    # php5-xdebug is currently not available for php 5.6 on debian wheezy
+    package { "$php_prefix-xdebug":
+      ensure  => latest,
+      notify  => Service["httpd"],
+      require => [
+        Exec["apt_update"]
+      ]
+    }
+  } else {
+    # php5-xdebug is currently not available for php 5.6 on debian wheezy
+    package {
+      [
+        "php-xdebug",
+        "php-imagick"
+      ]:
+        ensure  => latest,
+        notify  => Service["httpd"],
+        require => [
+          Exec["apt_update"]
+        ]
+    }
   }
 
   if $install_apc {
@@ -121,21 +161,21 @@ class vmsetup::php (
     group   => 'www-data',
     require => [
       Package["httpd"],
-      Package["php5"]
+      Package["$php_prefix"]
     ]
   }
 
-  if $install_zendguardloader {
+  if $install_zendguardloader and !$skip_zendguardloader {
     class { "vmsetup::zendguardloader":
-      version => $version,
-      mod_path => $mod_path,
+      version   => $version,
+      mod_path  => $mod_path,
       conf_path => $conf_path
     }
   }
-  if $install_ioncubeloader {
+  if $install_ioncubeloader and !$skip_ioncubeloader {
     class { "vmsetup::ioncubeloader":
-      version => $version,
-      mod_path => $mod_path,
+      version   => $version,
+      mod_path  => $mod_path,
       conf_path => $conf_path
     }
   }
@@ -151,13 +191,20 @@ class vmsetup::php (
       "[Date]",
       "date.timezone = Europe/Berlin"
     ], "\n"),
-    require => Package["php5"]
+    require => Package["$php_prefix"]
   }
 
   if $version > 5.3 {
-    exec{ "php5enmod custom":
-      notify  => Service["httpd"],
-      require => File["$conf_path/custom.ini"]
+    if $version < 5.6 {
+      exec{ "php5enmod custom":
+        notify  => Service["httpd"],
+        require => File["$conf_path/custom.ini"]
+      }
+    } else {
+      exec{ "phpenmod -v $version -s ALL custom":
+        notify  => Service["httpd"],
+        require => File["$conf_path/custom.ini"]
+      }
     }
   }
 
@@ -175,10 +222,10 @@ class vmsetup::php (
       "xdebug.var_display_max_depth=200"
     ], "\n"),
     notify  => Service["httpd"],
-    require => Package["php5"]
+    require => Package["$php_prefix"]
   }
 
-  if ($version > 5.4 and !$install_zendguardloader) {
+  if ($version > 5.4 and (!$install_zendguardloader or $skip_zendguardloader)) {
     file { "$conf_path/opcache.ini":
       content => join([
         "zend_extension=$mod_path/opcache.so",
@@ -186,7 +233,7 @@ class vmsetup::php (
         "opcache.cli_enable=1"
       ], "\n"),
       notify  => Service["httpd"],
-      require => Package["php5"]
+      require => Package["$php_prefix"]
     }
   }
 

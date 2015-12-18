@@ -45,7 +45,8 @@ class vmsetup (
   $install_elasticsearch = false,
   $use_shared_folder     = true,
   $elastic_version = 1.4,
-  $install_mysql = true
+  $install_mysql = true,
+  $vhost_port = 80
 ) {
 
   class { 'apt':
@@ -71,7 +72,9 @@ class vmsetup (
   class { "vmsetup::apache":
     hostname          => $hostname,
     use_shared_folder => $use_shared_folder,
-    webroot           => $webroot
+    webroot           => $webroot,
+    php_version       => $phpVersion,
+    vhost_port => $vhost_port
   }
 
   if $install_mysql {

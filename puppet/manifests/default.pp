@@ -13,6 +13,7 @@ node default {
   if $webroot == undef { $webroot = $data['webroot'] }
   if $elastic_version == undef { $elastic_version = $data['elastic-version'] }
   if $install_mysql == undef { $install_mysql = $data['install-mysql'] }
+  if $vhost_port == undef { $vhost_port = $data['vhost-port'] }
 
   class { "vmsetup":
     phpVersion              => $phpVersion,
@@ -24,7 +25,8 @@ node default {
     use_shared_folder       => $use_shared_folder,
     webroot                 => $webroot,
     elastic_version         => $elastic_version,
-    install_mysql           => $install_mysql
+    install_mysql           => $install_mysql,
+    vhost_port              => $vhost_port
   }
 
   if defined("vmcustoms") {
