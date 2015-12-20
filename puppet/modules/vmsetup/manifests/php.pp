@@ -135,7 +135,7 @@ class vmsetup::php (
       [
         "php-xdebug",
         "php-imagick",
-        "$php_version-mysql"
+        "$php_prefix-mysql"
       ]:
         ensure  => latest,
         notify  => Service["httpd"],
