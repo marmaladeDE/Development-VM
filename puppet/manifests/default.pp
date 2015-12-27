@@ -11,7 +11,13 @@ node default {
   if $install_ioncubeloader == undef { $install_ioncubeloader = $data['install-ioncubeloader'] }
   if $use_shared_folder == undef { $use_shared_folder = $data['use-shared-folder'] }
   if $webroot == undef { $webroot = $data['webroot'] }
-  if $elastic_version == undef { $elastic_version = $data['elastic-version'] }
+  if $elastic_version == undef {
+    if (is_numeric($data['elastic-version']) and $data['elastic-version'] >= 2.0 and $data['elastic-version'] < 3.0) {
+      $elastic_version = '2.x'
+    } else {
+      $elastic_version = $data['elastic-version']
+    }
+  }
   if $install_mysql == undef { $install_mysql = $data['install-mysql'] }
   if $vhost_port == undef { $vhost_port = $data['vhost-port'] }
 
