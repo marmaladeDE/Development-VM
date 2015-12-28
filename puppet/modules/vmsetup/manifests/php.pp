@@ -23,7 +23,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php/20131226/'
       $conf_path = '/etc/php/mods-available/'
       $php_prefix = "php5.6"
-      $phpenmod = 'phpenmod'
+      $phpenmod = 'phpenmod -v 5.6'
     }
     '5.4': {
       $dotdeb = true
@@ -54,7 +54,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php/20151012'
       $conf_path = '/etc/php/mods-available/'
       $php_prefix = "php7.0"
-      $phpenmod = 'phpenmod'
+      $phpenmod = 'phpenmod -v 7.0'
     }
   }
 
