@@ -13,6 +13,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php5/20121212/'
       $conf_path = '/etc/php5/mods-available/'
       $php_prefix = "php5"
+      $phpenmod = 'php5enmod'
     }
     '5.6': {
       $dotdeb = false
@@ -22,6 +23,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php/20131226/'
       $conf_path = '/etc/php/mods-available/'
       $php_prefix = "php5.6"
+      $phpenmod = 'phpenmod'
     }
     '5.4': {
       $dotdeb = true
@@ -31,6 +33,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php5/20100525/'
       $conf_path = '/etc/php5/mods-available/'
       $php_prefix = "php5"
+      $phpenmod = 'php5enmod'
     }
     '5.3': {
       $dotdeb = false
@@ -39,6 +42,7 @@ class vmsetup::php (
       $mod_path = "/usr/lib/php5/20090626/"
       $conf_path = '/etc/php5/conf.d/'
       $php_prefix = "php5"
+      $phpenmod = 'php5enmod'
     }
     '7.0': {
       $dotdeb = false
@@ -50,6 +54,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php/20151012'
       $conf_path = '/etc/php/mods-available/'
       $php_prefix = "php7.0"
+      $phpenmod = 'phpenmod'
     }
   }
 
