@@ -52,8 +52,34 @@ class vmsetup::elasticsearch ($version = 1.4) {
       require => Package['elasticsearch'],
       notify  => Service['elasticsearch']
     }
+
+    exec { 'elasticsearch::enable dynamic scripting':
+      command => 'echo script.inline: on >> /etc/elasticsearch/elasticsearch.yml',
+      unless  => "cat /etc/elasticsearch/elasticsearch.yml | grep -q 'script.inline: on'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch']
+    }
+
+    exec { 'elasticsearch::disable local ip binding':
+      command => 'echo network.host: 0.0.0.0 >> /etc/elasticsearch/elasticsearch.yml',
+      unless  => "cat /etc/elasticsearch/elasticsearch.yml | grep -q 'network.host: 0.0.0.0'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch']
+    }
   }
   if (is_numeric($version) and $version >= 1.4 and $version < 2.0) {
+    if ($version == 1.4) {
+      $mvel_plugin_version = '1.4.1'
+    }
+    if ($version == 1.5) {
+      $mvel_plugin_version = '1.5.0'
+    }
+    if ($version == 1.6) {
+      $mvel_plugin_version = '1.6.0'
+    }
+    if ($version == 1.7) {
+      $mvel_plugin_version = '1.7.0'
+    }
     exec { 'elasticsearch::enable marvel':
       command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest',
       unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'marvel'",
@@ -81,13 +107,11 @@ class vmsetup::elasticsearch ($version = 1.4) {
       notify  => Service['elasticsearch'],
     }
 
-    if $version == 1.4 {
-      exec { 'elasticsearch::enable mvel':
-        command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/elasticsearch-lang-mvel/1.4.1',
-        unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'lang-mvel'",
-        require => Package['elasticsearch'],
-        notify  => Service['elasticsearch']
-      }
+    exec { 'elasticsearch::enable mvel':
+      command => "/usr/share/elasticsearch/bin/plugin -i elasticsearch/elasticsearch-lang-mvel/$mvel_plugin_version",
+      unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'lang-mvel'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch']
     }
 
     exec { 'elasticsearch::enable analysis-icu':
