@@ -13,13 +13,13 @@ zend_loader.enable=1
 zend_loader.disable_licensing=0",
     notify  => Service["httpd"],
     require => [
-      Package["php5"],
+      Package[$::vmsetup::php::php_prefix],
       File["$mod_path"]
     ]
   }
 
   if $version > 5.3 {
-    exec { "php5enmod zendguard/99":
+    exec { "$::vmsetup::php::phpenmod zendguard/99":
       notify  => Service['httpd'],
       require => File["$conf_path/zendguard.ini"]
     }
@@ -39,7 +39,7 @@ zend_loader.disable_licensing=0",
         "opcache.cli_enable=1"
       ], "\n"),
       notify  => Service["httpd"],
-      require => [Package["php5"], File["$mod_path/opcache_zgl.so"]]
+      require => [Package[$::vmsetup::php::php_prefix], File["$mod_path/opcache_zgl.so"]]
     }
   }
 }
