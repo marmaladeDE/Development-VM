@@ -54,7 +54,7 @@ class vmsetup::php (
       $mod_path = '/usr/lib/php/20151012'
       $conf_path = '/etc/php/mods-available/'
       $php_prefix = "php7.0"
-      $phpenmod = 'phpenmod -v 7.0'
+      $phpenmod = 'phpenmod -v 7.0 -s ALL'
     }
   }
 
@@ -201,16 +201,14 @@ class vmsetup::php (
   }
 
   if $version > 5.3 {
-    if $version < 5.6 {
-      exec{ "php5enmod custom":
-        notify  => Service["httpd"],
-        require => File["$conf_path/custom.ini"]
-      }
-    } else {
-      exec{ "phpenmod -v $version -s ALL custom":
-        notify  => Service["httpd"],
-        require => File["$conf_path/custom.ini"]
-      }
+    exec { "$::vmsetup::php::phpenmod custom":
+      notify  => Service['httpd'],
+      require => File["$conf_path/custom.ini"]
+    }
+
+    exec { "$::vmsetup::php::phpenmod curl/20":
+      notify  => Service['httpd'],
+      require => Package["$php_prefix-curl"]
     }
   }
 
