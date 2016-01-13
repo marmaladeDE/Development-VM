@@ -76,7 +76,7 @@ class vmsetup::apache ($hostname, $use_shared_folder, $webroot, $php_version, $v
     notify          => Class['Apache::Service']
   }
 
-  exec { "a2dissite 000-default.conf":
+  exec { "a2dissite 000-default":
     require => Apache::Vhost['webroot'],
     notify  => Class['Apache::Service']
   }
