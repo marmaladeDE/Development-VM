@@ -177,4 +177,8 @@ password=root",
     ], "\n")
   }
 
+  exec { "Generate german locale":
+    command => "locale-gen de_DE.UTF-8",
+    unless  => "locale -a | grep -q de_DE.utf8",
+  }
 }
