@@ -88,7 +88,7 @@ Vagrant.configure('2') do |config|
       virtualbox.customize ['modifyvm', :id, '--memory', "#{data['vm']['memory']}"]
       virtualbox.customize ['modifyvm', :id, '--cpus', "#{data['vm']['cpus']}"]
       virtualbox.customize ['modifyvm', :id, '--name', config.vm.hostname]
-      if data['vm']['cpus'] > 1
+      if data['vm']['cpus'].to_i > 1
         virtualbox.customize ["modifyvm", :id, "--ioapic", "on"]
       end
     end
