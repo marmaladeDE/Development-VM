@@ -1,0 +1,21 @@
+{
+  "name": "cpick-gdebi",
+  "version": "0.1.1",
+  "author": "Chris Pick",
+  "summary": "Package provider that uses gdebi to install a Debian package (.deb) file with its dependencies",
+  "license": "Apache-2.0",
+  "source": "https://github.com/cpick/puppet-gdebi.git",
+  "project_page": "https://github.com/cpick/puppet-gdebi",
+  "issues_url": "https://github.com/cpick/puppet-gdebi/issues",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu"
+    },
+    {
+      "operatingsystem": "Debian"
+    }
+  ],
+  "dependencies": [
+  
+  ]
+}

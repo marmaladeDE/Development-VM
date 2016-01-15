@@ -1,0 +1,6 @@
+{
+  "README.md": "4f9dc05ff19e38b7f84ed97b4028a052",
+  "lib/puppet/provider/package/gdebi.rb": "aefc462fb9f0e4471fc544e1e4f8b522",
+  "manifests/init.pp": "f011fac376f88e476d6a9b16d52ba22c",
+  "metadata.json": "6ab5516170be7e7790d901b14bbe194a"
+}
