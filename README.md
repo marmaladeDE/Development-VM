@@ -18,6 +18,18 @@ ROOTDIR
 -- YOUR_PROJECT_FILES_HERE
 ``` 
 
+You can use this snippet to create the correct folder-structure
+
+```
+mkdir marmalade_vm
+cd marmalade_vm
+mkdir config
+mkdir config/vm
+mkdir web
+git clone https://github.com/marmaladeDE/Development-VM.git vm
+cp vm/example_config.yaml config/vm/config.yaml
+```
+
 ## User and Passwords
 
 __SSH:__ vagrant / vagrant
