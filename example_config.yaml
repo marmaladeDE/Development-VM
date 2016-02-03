@@ -1,4 +1,5 @@
 ---
+### This is the single-vm configuration
 config:
   # hostname setting
   hostname: 'my.project'
@@ -26,3 +27,59 @@ config:
     cpus: '1'
     # customize network ip default is 192.168.42.100 for virtualbox and 192.168.33.100 for vmware
     private_network_ip: 192.168.42.110
+
+### And this one is for multiple VMs
+config:
+  # VM provider ['virtualbox'|'vmware_workstation'|'vmware_fusion']
+  provider: virtualbox
+  # The hostname of you VM
+  hostname: test-vm.dev
+  # Nodes to manage
+  nodes:
+    # This is the name of the node
+    db:
+      # Specifies the Puppet script for this node. If it's not given the name of the node will be used.
+      # Predefined scripts: apache, mysql, elastic
+      manifest: mysql
+      # VM configuration
+      vm:
+        # memory assigned to vm in MiB
+        memory: 1024
+        # No CPUs assigned to VM
+        cpus: 2
+        # Customize network ip default is 192.168.42.100 for VirtualBox and 192.168.33.100 for VMware
+        private_network_ip: 192.168.42.92
+    http:
+      manifest: apache
+      # project folder that is linked to docroot
+      webroot: web
+      # PHP version possible options ['5.3'|'5.4'|'5.5'|'5.6'|'7.0']
+      php-version: '7.0'
+      # Port for the web server
+      vhost-port: 80
+      # Should ZendGuardLoader (ZGL) be installed [true|false]
+      install-zendguardloader: true
+      # Should IonCube loader be installed [true|false]
+      install-ioncubeloader: false
+      # create symlink from shared folder for webroot [true|false]
+      use-shared-folder: true
+      vm:
+        memory: 512
+        cpus: 1
+        private_network_ip: 192.168.42.91
+    elastic:
+      manifest: elastic
+      # which version of elastic should be installed [0.90 up to current, defaults to 1.4]
+      # ATTENTION: If you've a tailing null you must put the version into single quotes!
+      elastic-version: '1.7'
+      vm:
+        memory: 1024
+        cpus: 1
+        private_network_ip: 192.168.42.93
+    proxy:
+      # Mark this VM as the default one
+      primary: true
+      vm:
+        memory: 256
+        cpus: 1
+        private_network_ip: 192.168.42.90

@@ -108,13 +108,19 @@ Vagrant.configure("2") do |config|
 
                 manifestsPath = "puppet/manifests"
 
+                manifestFile = "#{nodeName}.pp"
+                if nodeConfig.has_key?('manifest')
+                    nodeManifest = nodeConfig['manifest']
+                    manifestFile = "#{nodeManifest}.pp"
+                end
+
                 # Puppet manifest for the current node doesn't exist, so it have to be inside the configuration directory!
-                if !File.exists?("puppet/manifests/#{nodeName}.pp")
+                if !File.exists?("puppet/manifests/#{manifestFile}")
                     manifestsPath = "../config/vm/puppet/manifests"
                 end
 
                 puppet.manifests_path = manifestsPath
-                puppet.manifest_file  = "#{nodeName}.pp"
+                puppet.manifest_file  = manifestFile
                 puppet.module_path    = $modulePaths
                 puppet.options = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
             end
