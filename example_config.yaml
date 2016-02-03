@@ -79,6 +79,12 @@ config:
     proxy:
       # Mark this VM as the default one
       primary: true
+      # Define your proxies here
+      # Each proxy nust contain a location (which is the "path" part of the URL) and a link to a node.
+      # If the target service is accessable on another port than 80 you can specify it with the "port" key.
+      proxies:
+        - { location: /, node: http }
+        - { location: /es, node: elastic, port: 9200 }
       vm:
         memory: 256
         cpus: 1
