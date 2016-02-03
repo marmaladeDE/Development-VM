@@ -1,0 +1,18 @@
+#
+# This file is managed by puppet. DO NOT EDIT!
+#
+
+server {
+    listen <%= @listen_ip %>:<%= @listen_port %>;
+    server_name <%= @server_name %>;
+    <% @proxies.each do |proxy| %>
+    location <%= proxy['location'] %> {
+            proxy_read_timeout 600s;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_pass http://<%= @nodes[proxy['node']]['vm']['private_network_ip'] %><% if proxy.has_key?('port') %>:<%= proxy['port'] %><% end %>;
+    }
+    <% end %>
+}
