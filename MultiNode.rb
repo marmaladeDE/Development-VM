@@ -34,6 +34,10 @@ Vagrant.configure("2") do |config|
 
             node.vm.hostname = nodeHostname
 
+            if Vagrant.has_plugin?("vagrant-cachier")
+                node.cache.scope = :box
+            end
+
             # set private network ip
             if nodeConfig['vm']['private_network_ip'].to_s != ''
                 network_ip = "#{nodeConfig['vm']['private_network_ip']}"

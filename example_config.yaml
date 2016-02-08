@@ -45,7 +45,7 @@ config:
       vm:
         # memory assigned to vm in MiB
         memory: 1024
-        # No CPUs assigned to VM
+        # Number of CPUs assigned to VM
         cpus: 2
         # Customize network ip default is 192.168.42.100 for VirtualBox and 192.168.33.100 for VMware
         private_network_ip: 192.168.42.92

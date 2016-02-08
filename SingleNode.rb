@@ -22,6 +22,10 @@ Vagrant.configure('2') do |config|
     end
   end
 
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
+
   # set hostname
   if data['hostname'].to_s.strip.length != 0
     config.vm.hostname = "#{data['hostname']}"
