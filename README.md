@@ -25,7 +25,7 @@ mkdir marmalade_vm
 cd marmalade_vm
 mkdir -p config/vm
 mkdir web
-git clone git@gitlab.marmalade.de:development-standards/vm_generic.git vm
+git clone https://github.com/marmaladeDE/Development-VM.git vm
 cp vm/example_config.yaml config/vm/config.yaml
 ```
 
