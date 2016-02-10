@@ -97,7 +97,7 @@ Vagrant.configure("2") do |config|
                 $modulePaths.push("../config/vm/puppet/modules")
             end
 
-            node.vm.provision 'shell', inline: "apt-get -y -qq update"
+            node.vm.provision 'shell', inline: "echo Running apt-get update\napt-get -y -qq update"
 
             if nodeConfig.has_key?('pre-puppet')
                 node.vm.provision 'shell', inline: nodeConfig['pre-puppet'].join("\n")

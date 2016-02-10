@@ -16,7 +16,7 @@ class vmsetup::apache ($hostname, $use_shared_folder, $webroot, $php_version, $v
   include apache::mod::dir
   include apache::mod::rewrite
 
-  if $php_version >= 5.6 {
+  if $php_version > 5.6 {
     class { 'apache::mod::php':
       package_name => "libapache2-mod-php$php_version"
     }

@@ -17,13 +17,13 @@ class vmsetup::php (
     }
     '5.6': {
       $dotdeb = false
-      $release = 'ppa:ondrej/php'
+      $release = 'ppa:ondrej/php5-5.6'
       $install_apc = false
       $install_xdebug = true
-      $mod_path = '/usr/lib/php/20131226/'
-      $conf_path = '/etc/php/mods-available/'
-      $php_prefix = "php5.6"
-      $phpenmod = 'phpenmod -v 5.6'
+      $mod_path = '/usr/lib/php5/20131226/'
+      $conf_path = '/etc/php5/mods-available/'
+      $php_prefix = "php5"
+      $phpenmod = 'php5enmod'
     }
     '5.4': {
       $dotdeb = true
@@ -111,7 +111,7 @@ class vmsetup::php (
         Package["httpd"]
       ]
   }
-  if $version < 5.6 {
+  if $version < 7.0 {
     package {
       [
         "$php_prefix-imagick",
