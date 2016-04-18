@@ -52,7 +52,7 @@ class vmsetup::php (
       $skip_zendguardloader = true
       $skip_ioncubeloader = true
       $mod_path = '/usr/lib/php/20151012'
-      $conf_path = '/etc/php/mods-available/'
+      $conf_path = '/etc/php/7.0/mods-available/'
       $php_prefix = "php7.0"
       $phpenmod = 'phpenmod -v 7.0 -s ALL'
     }
