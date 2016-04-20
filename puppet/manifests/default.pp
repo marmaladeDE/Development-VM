@@ -21,6 +21,12 @@ node default {
   if $install_mysql == undef { $install_mysql = $data['install-mysql'] }
   if $vhost_port == undef { $vhost_port = $data['vhost-port'] }
 
+  if has_key($data, 'aliases') {
+    $vhost_aliases = $data['aliases']
+  } else {
+    $vhost_aliases = { }
+  }
+
   class { "vmsetup":
     phpVersion              => $phpVersion,
     hostname                => $config_hostname,
@@ -32,7 +38,8 @@ node default {
     webroot                 => $webroot,
     elastic_version         => $elastic_version,
     install_mysql           => $install_mysql,
-    vhost_port              => $vhost_port
+    vhost_port              => $vhost_port,
+    vhost_aliases           => $vhost_aliases
   }
 
   if defined("vmcustoms") {

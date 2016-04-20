@@ -97,6 +97,11 @@ Vagrant.configure('2') do |config|
     end
   end
 
+    if data.has_key?('aliases') && Vagrant.has_plugin?('vagrant-hostsupdater')
+        config.hostsupdater.aliases = data['aliases']
+    end
+
+
   ssh_username = 'vagrant'
   $modulePaths = ["puppet/modules"]
   if File.directory?("../config/vm/puppet/modules")

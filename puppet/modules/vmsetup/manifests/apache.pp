@@ -1,4 +1,4 @@
-class vmsetup::apache ($hostname, $use_shared_folder, $webroot, $php_version, $vhost_port = 80) {
+class vmsetup::apache ($hostname, $use_shared_folder, $webroot, $php_version, $vhost_port = 80, $vhost_aliases = {}) {
 
   $hostDir = "/srv/${hostname}"
   $docRoot = "${hostDir}/web"
@@ -73,7 +73,8 @@ class vmsetup::apache ($hostname, $use_shared_folder, $webroot, $php_version, $v
       File[$docRoot]
     ],
     servername      => $hostname,
-    notify          => Class['Apache::Service']
+    notify          => Class['Apache::Service'],
+    serveraliases   => $vhost_aliases
   }
 
   exec { "a2dissite 000-default":

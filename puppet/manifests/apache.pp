@@ -5,6 +5,12 @@ node default {
 
   $nodeConfig = $::vmsetup::params::nodeConfig
 
+  if has_key($nodeConfig, 'aliases') {
+    $vhost_aliases = $nodeConfig['aliases']
+  } else {
+    $vhost_aliases = { }
+  }
+
   class { "vmsetup::php":
     version                 => $nodeConfig['php-version'],
     xdebug_remote_host      => $xdebug_remote_host,
@@ -17,7 +23,8 @@ node default {
     use_shared_folder => $nodeConfig['use-shared-folder'],
     webroot           => $nodeConfig['webroot'],
     php_version       => $nodeConfig['php-version'],
-    vhost_port        => $nodeConfig['vhost-port']
+    vhost_port        => $nodeConfig['vhost-port'],
+    vhost_aliases     => $vhost_aliases
   }
 
   if defined("vmcustoms::$node_name") {

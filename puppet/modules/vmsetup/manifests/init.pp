@@ -46,7 +46,8 @@ class vmsetup (
   $use_shared_folder     = true,
   $elastic_version = 1.4,
   $install_mysql = true,
-  $vhost_port = 80
+  $vhost_port = 80,
+  $vhost_aliases = { }
 ) {
 
   class { 'apt':
@@ -74,7 +75,8 @@ class vmsetup (
     use_shared_folder => $use_shared_folder,
     webroot           => $webroot,
     php_version       => $phpVersion,
-    vhost_port => $vhost_port
+    vhost_port        => $vhost_port,
+    vhost_aliases     => $vhost_aliases
   }
 
   if $install_mysql {
@@ -84,8 +86,8 @@ class vmsetup (
 
     $override_options = {
       'mysqld' => {
-        'bind-address' => "0.0.0.0",
-        'key_buffer_size' => "${key_buffer_size}M",
+        'bind-address'            => "0.0.0.0",
+        'key_buffer_size'         => "${key_buffer_size}M",
         'innodb_buffer_pool_size' => "${innodb_buffer_pool_size}M"
       }
     }
