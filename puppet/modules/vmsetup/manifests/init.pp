@@ -80,7 +80,7 @@ class vmsetup (
   }
 
   if $install_mysql {
-    $mysql_total_mem = floor($::vmsetup::params::nodeConfig['vm']['memory'] * 0.5)
+    $mysql_total_mem = floor($::vmsetup::params::globalConfig['vm']['memory'] * 0.5)
     $key_buffer_size = floor($mysql_total_mem * 0.25)
     $innodb_buffer_pool_size = floor($mysql_total_mem * 0.75)
 

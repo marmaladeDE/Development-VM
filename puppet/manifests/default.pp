@@ -27,6 +27,8 @@ node default {
     $vhost_aliases = { }
   }
 
+  include vmsetup::params
+
   class { "vmsetup":
     phpVersion              => $phpVersion,
     hostname                => $config_hostname,
