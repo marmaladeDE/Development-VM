@@ -223,7 +223,8 @@ class vmsetup::php (
       "xdebug.idekey=PHPSTORM",
       "xdebug.var_display_max_children=512",
       "xdebug.var_display_max_data=2560",
-      "xdebug.var_display_max_depth=200"
+      "xdebug.var_display_max_depth=200",
+      "xdebug.profiler_enable_trigger=1"
     ], "\n"),
     notify  => Service["httpd"],
     require => Package["$php_prefix"]
