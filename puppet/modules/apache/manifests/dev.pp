@@ -1,11 +1,14 @@
 class apache::dev {
-  if $::osfamily == 'FreeBSD' and !defined(Class['apache::package']) {
-    fail('apache::dev requires apache::package; please include apache or apache::package class first')
+
+  if ! defined(Class['apache']) {
+    fail('You must include the apache base class before using any apache defined resources')
   }
-  include ::apache::params
-  $packages = $::apache::params::dev_packages
-  package { $packages:
-    ensure  => present,
-    require => Package['httpd'],
+
+  $packages = $::apache::dev_packages
+  if $packages { # FreeBSD doesn't have dev packages to install
+    package { $packages:
+      ensure  => present,
+      require => Package['httpd'],
+    }
   }
 }

@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 Puppet::Type.newtype(:ini_subsetting) do
 
   ensurable do
@@ -5,12 +7,27 @@ Puppet::Type.newtype(:ini_subsetting) do
     defaultto :present
   end
 
+  def munge_boolean_md5(value)
+    case value
+    when true, :true, 'true', :yes, 'yes'
+      :true
+    when false, :false, 'false', :no, 'no'
+      :false
+    when :md5, 'md5'
+      :md5
+    else
+      fail('expected a boolean value or :md5')
+    end
+  end
+
   newparam(:name, :namevar => true) do
     desc 'An arbitrary name used as the identity of the resource.'
   end
 
   newparam(:section) do
-    desc 'The name of the section in the ini file in which the setting should be defined.'
+    desc 'The name of the section in the ini file in which the setting should be defined.' +
+      'If not provided, defaults to global, top of file, sections.'
+    defaultto("")
   end
 
   newparam(:setting) do
@@ -35,17 +52,21 @@ Puppet::Type.newtype(:ini_subsetting) do
     end
   end
 
+  newparam(:show_diff) do
+    desc 'Whether to display differences when the setting changes.'
+    defaultto :true
+    newvalues(:true, :md5, :false)
+
+    munge do |value|
+      @resource.munge_boolean_md5(value)
+    end
+  end
+
   newparam(:key_val_separator) do
     desc 'The separator string to use between each setting name and value. ' +
-        'Defaults to " = ", but you could use this to override e.g. whether ' +
-        'or not the separator should include whitespace.'
+        'Defaults to " = ", but you could use this to override e.g. ": ", or' +
+        'whether or not the separator should include whitespace.'
     defaultto(" = ")
-
-    validate do |value|
-      unless value.scan('=').size == 1
-        raise Puppet::Error, ":key_val_separator must contain exactly one = character."
-      end
-    end
   end
 
   newparam(:quote_char) do
@@ -60,8 +81,32 @@ Puppet::Type.newtype(:ini_subsetting) do
     end
   end
 
+  newparam(:use_exact_match) do
+    desc 'Set to true if your subsettings don\'t have values and you want to use exact matches to determine if the subsetting exists. See MODULES-2212'
+    newvalues(:true, :false)
+    defaultto(:false)
+  end
+
   newproperty(:value) do
     desc 'The value of the subsetting to be defined.'
+
+    def should_to_s(newvalue)
+      if (@resource[:show_diff] == :true && Puppet[:show_diff]) then
+        return newvalue
+      elsif (@resource[:show_diff] == :md5 && Puppet[:show_diff]) then
+        return '{md5}' + Digest::MD5.hexdigest(newvalue.to_s)
+      else
+        return '[redacted sensitive information]'
+      end
+    end
+
+    def is_to_s(value)
+      should_to_s(value)
+    end
+
+    def is_to_s(value)
+      should_to_s(value)
+    end
   end
 
 end

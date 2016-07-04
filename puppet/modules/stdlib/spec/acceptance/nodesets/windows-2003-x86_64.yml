@@ -17,7 +17,7 @@ HOSTS:
 CONFIG:
   nfs_server: none
   ssh:
-    languageKeys: "~/.ssh/id_rsa-acceptance"
+    keys: "~/.ssh/id_rsa-acceptance"
   consoleport: 443
   datastore: instance0
   folder: Delivery/Quality Assurance/Enterprise/Dynamic

@@ -3,10 +3,10 @@ require 'spec_helper'
 describe 'apache::mod::proxy_connect', :type => :class do
   let :pre_condition do
     [
-      'include apache',
       'include apache::mod::proxy',
     ]
   end
+  it_behaves_like "a mod class, without including apache"
   context 'on a Debian OS' do
     let :facts do
       {
@@ -19,7 +19,21 @@ describe 'apache::mod::proxy_connect', :type => :class do
         :is_pe                  => false,
       }
     end
-    context 'with Apache version < 2.4' do
+    context 'with Apache version < 2.2' do
+      let :facts do
+        super().merge({
+          :operatingsystemrelease => '7.0',
+          :lsbdistcodename        => 'wheezy',
+        })
+      end
+      let :params do
+        {
+          :apache_version => '2.1',
+        }
+      end
+      it { is_expected.not_to contain_apache__mod('proxy_connect') }
+    end
+    context 'with Apache version = 2.2' do
       let :facts do
         super().merge({
           :operatingsystemrelease => '7.0',
@@ -31,7 +45,7 @@ describe 'apache::mod::proxy_connect', :type => :class do
           :apache_version => '2.2',
         }
       end
-      it { is_expected.not_to contain_apache__mod('proxy_connect') }
+      it { is_expected.to contain_apache__mod('proxy_connect') }
     end
     context 'with Apache version >= 2.4' do
       let :facts do

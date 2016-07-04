@@ -3,7 +3,7 @@ require 'pathname'
 Puppet::Type.newtype(:apt_key) do
 
   @doc = <<-EOS
-    This type provides Puppet with the capabilities to manage GPG languageKeys needed
+    This type provides Puppet with the capabilities to manage GPG keys needed
     by apt to perform package validation. Apt has it's own GPG keyring that can
     be manipulated through the `apt-key` command.
 
@@ -23,9 +23,9 @@ Puppet::Type.newtype(:apt_key) do
     if self[:content] and self[:source]
       fail('The properties content and source are mutually exclusive.')
     end
-    if self[:id].length < 40
+    if self[:id].length < 40 
       warning('The id should be a full fingerprint (40 characters), see README.')
-    end
+    end 
   end
 
   newparam(:id, :namevar => true) do
@@ -65,7 +65,7 @@ Puppet::Type.newtype(:apt_key) do
     newvalues(/\A((hkp|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$/)
   end
 
-  newparam(:keyserver_options) do
+  newparam(:options) do
     desc 'Additional options to pass to apt-key\'s --keyserver-options.'
   end
 

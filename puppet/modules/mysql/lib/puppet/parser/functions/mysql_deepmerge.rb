@@ -12,7 +12,7 @@ module Puppet::Parser::Functions
 
     When there is a duplicate key that is a hash, they are recursively merged.
     When there is a duplicate key that is not a hash, the key in the rightmost hash will "win."
-    When there are conficting uses of dashes and underscores in two languageKeys (which mysql would otherwise equate),
+    When there are conficting uses of dashes and underscores in two keys (which mysql would otherwise equate),
       the rightmost style will win.
 
     ENDHEREDOC
@@ -30,7 +30,7 @@ module Puppet::Parser::Functions
       end
 
       # Now we have to traverse our hash assigning our non-hash values
-      # to the matching languageKeys in our result while following our hash values
+      # to the matching keys in our result while following our hash values
       # and repeating the process.
       overlay( result, arg )
     end

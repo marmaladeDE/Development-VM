@@ -1,4 +1,6 @@
 class vmsetup::common {
+  include vmsetup::params
+
   class { 'apt':
     always_apt_update    => false,
     apt_update_frequency => undef,
@@ -40,7 +42,34 @@ class vmsetup::common {
       require => Exec["apt_update"]
   }
 
-  exec { "usermod -g www-data -aG vagrant vagrant": }
+  file { "/usr/local/sbin/check-primary-group":
+    content => "#/bin/sh
+if [ $# -ne 2]; then
+    echo \"Usage: \$0 <Group> <User>\"
+    exit 255
+fi
+
+GROUP=$(grep -E \"^\$1\" /etc/group)
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+GID=$(echo \$GROUP|cut -d\":\" -f 3)
+
+PGROUP=$(grep -E \"^\$2\" /etc/passwd)
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+PGID=$(echo \$PGROUP|cut -d\":\" -f 4)
+
+[ \$GID -eq \$PGID ];
+",
+    mode => "+x"
+  }
+  exec { "usermod -g www-data -aG vagrant vagrant":
+    unless => "check-primary-group www-data vagrant"
+  }
 
   exec { 'echo "vagrant:vagrant" | chpasswd': }
 
@@ -59,4 +88,5 @@ class vmsetup::common {
     unless  => "locale -a | grep -q de_DE.utf8",
   }
 
+  class {"vmsetup::timezone": timezone => $::vmsetup::params::timezone}
 }

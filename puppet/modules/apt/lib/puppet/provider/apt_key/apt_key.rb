@@ -18,7 +18,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
   commands   :gpg      => '/usr/bin/gpg'
 
   def self.instances
-    cli_args = ['adv','--list-languageKeys', '--with-colons', '--fingerprint', '--fixed-list-mode']
+    cli_args = ['adv','--list-keys', '--with-colons', '--fingerprint', '--fixed-list-mode']
 
     if RUBY_VERSION > '1.8.7'
       key_output = apt_key(cli_args).encode('UTF-8', 'binary', :invalid => :replace, :undef => :replace, :replace => '')
@@ -67,7 +67,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
 
   def self.prefetch(resources)
     apt_keys = instances
-    resources.languageKeys.each do |name|
+    resources.keys.each do |name|
       if name.length == 40
         if provider = apt_keys.find{ |key| key.fingerprint == name }
           resources[name].provider = provider
@@ -118,7 +118,13 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     parsedValue = URI::parse(value)
     if parsedValue.scheme.nil?
       fail("The file #{value} does not exist") unless File.exists?(value)
-      value
+      # Because the tempfile method has to return a live object to prevent GC
+      # of the underlying file from occuring too early, we also have to return
+      # a file object here.  The caller can still call the #path method on the
+      # closed file handle to get the path.
+      f = File.open(value, 'r')
+      f.close
+      f
     else
       begin
         key = parsedValue.read
@@ -132,6 +138,9 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     end
   end
 
+  # The tempfile method needs to return the tempfile object to the caller, so
+  # that it doesn't get deleted by the GC immediately after it returns.  We
+  # want the caller to control when it goes out of scope.
   def tempfile(content)
     file = Tempfile.new('apt_key')
     file.write content
@@ -141,14 +150,21 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
       if File.executable? command(:gpg)
         extracted_key = execute(["#{command(:gpg)} --with-fingerprint --with-colons #{file.path} | awk -F: '/^fpr:/ { print $10 }'"], :failonfail => false)
         extracted_key = extracted_key.chomp
-        if extracted_key != name
+
+        found_match = false
+        extracted_key.each_line do |line|
+          if line.chomp == name
+            found_match = true
+          end
+        end
+        if not found_match
           fail("The id in your manifest #{resource[:name]} and the fingerprint from content/source do not match. Please check there is not an error in the id or check the content/source is legitimate.")
         end
       else
         warning('/usr/bin/gpg cannot be found for verification of the id.')
       end
     end
-    file.path
+    file
   end
 
   def exists?
@@ -159,16 +175,18 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
     command = []
     if resource[:source].nil? and resource[:content].nil?
       # Breaking up the command like this is needed because it blows up
-      # if --recv-languageKeys isn't the last argument.
+      # if --recv-keys isn't the last argument.
       command.push('adv', '--keyserver', resource[:server])
-      unless resource[:keyserver_options].nil?
-        command.push('--keyserver-options', resource[:keyserver_options])
+      unless resource[:options].nil?
+        command.push('--keyserver-options', resource[:options])
       end
-      command.push('--recv-languageKeys', resource[:id])
+      command.push('--recv-keys', resource[:id])
     elsif resource[:content]
-      command.push('add', tempfile(resource[:content]))
+      key_file = tempfile(resource[:content])
+      command.push('add', key_file.path)
     elsif resource[:source]
-      command.push('add', source_to_file(resource[:source]))
+      key_file = source_to_file(resource[:source])
+      command.push('add', key_file.path)
     # In case we really screwed up, better safe than sorry.
     else
       fail("an unexpected condition occurred while trying to add the key: #{resource[:id]}")

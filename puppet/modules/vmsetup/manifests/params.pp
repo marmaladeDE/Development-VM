@@ -6,4 +6,10 @@ class vmsetup::params {
     $nodeConfig = $globalConfig['nodes'][$node_name]
   }
   $hostname = $node_hostname
+
+  if has_key($globalConfig, 'timezone') {
+    $timezone = $globalConfig['timezone']
+  } else {
+    $timezone = "Europe/Berlin"
+  }
 }

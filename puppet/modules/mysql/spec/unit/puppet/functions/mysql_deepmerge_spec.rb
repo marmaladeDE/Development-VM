@@ -74,13 +74,13 @@ describe Puppet::Parser::Functions.function(:mysql_deepmerge) do
       expect(hash['key2']).to eq({ 'c' => 3 })
     end
 
-    it 'should equate languageKeys mod dash and underscore' do
+    it 'should equate keys mod dash and underscore' do
       hash = scope.function_mysql_deepmerge([{  'a-b-c' => 1 } , { 'a_b_c' => 10 }])
       expect(hash['a_b_c']).to eq(10)
       expect(hash).not_to have_key('a-b-c')
     end
 
-    it 'should keep style of the last when languageKeys are euqal mod dash and underscore' do
+    it 'should keep style of the last when keys are euqal mod dash and underscore' do
       hash = scope.function_mysql_deepmerge([{  'a-b-c' => 1,  'b_c_d' => { 'c-d-e' => 2, 'e-f-g' => 3 }} , { 'a_b_c' => 10, 'b-c-d' => { 'c_d_e' => 12 } }])
       expect(hash['a_b_c']).to eq(10)
       expect(hash).not_to have_key('a-b-c')

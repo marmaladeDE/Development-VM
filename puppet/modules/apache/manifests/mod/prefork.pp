@@ -24,7 +24,7 @@ class apache::mod::prefork (
   File {
     owner => 'root',
     group => $::apache::params::root_group,
-    mode  => '0644',
+    mode  => $::apache::file_mode,
   }
 
   # Template uses:
@@ -60,7 +60,7 @@ class apache::mod::prefork (
         }
       }
     }
-    'debian', 'freebsd' : {
+    'debian', 'freebsd', 'Suse' : {
       ::apache::mpm{ 'prefork':
         apache_version => $apache_version,
       }

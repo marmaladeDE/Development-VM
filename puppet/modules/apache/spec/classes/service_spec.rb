@@ -57,7 +57,7 @@ describe 'apache::service', :type => :class do
       let (:params) {{ :service_enable => 'not-a-boolean' }}
 
       it 'should fail' do
-        expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        expect { catalogue }.to raise_error(Puppet::Error, /is not a boolean/)
       end
     end
 
@@ -65,7 +65,7 @@ describe 'apache::service', :type => :class do
       let (:params) {{ :service_manage => 'not-a-boolean' }}
 
       it 'should fail' do
-        expect { subject }.to raise_error(Puppet::Error, /is not a boolean/)
+        expect { catalogue }.to raise_error(Puppet::Error, /is not a boolean/)
       end
     end
 
@@ -91,6 +91,18 @@ describe 'apache::service', :type => :class do
       let (:params) {{ :service_ensure => 'UNDEF' }}
       it { is_expected.to contain_service("httpd").without_ensure }
     end
+
+    context "with $service_restart unset" do
+      it { is_expected.to contain_service("httpd").without_restart }
+    end
+
+    context "with $service_restart => '/usr/sbin/apachectl graceful'" do
+     let (:params) {{ :service_restart => '/usr/sbin/apachectl graceful' }}
+     it { is_expected.to contain_service("httpd").with(
+        'restart' => '/usr/sbin/apachectl graceful'
+      )
+     }
+    end
   end
 
 
@@ -114,9 +126,7 @@ describe 'apache::service', :type => :class do
         'service_manage' => false
       }
     end
-    it 'should not manage the httpd service' do
-      subject.should_not contain_service('httpd')
-    end
+    it { is_expected.not_to contain_service('httpd') }
   end
 
   context "on a FreeBSD 5 OS" do

@@ -8,7 +8,7 @@ HOSTS:
 CONFIG:
   type: foss
   ssh:
-    languageKeys: "~/.ssh/id_rsa-acceptance"
+    keys: "~/.ssh/id_rsa-acceptance"
   datastore: instance0
   folder: Delivery/Quality Assurance/Enterprise/Dynamic
   resourcepool: delivery/Quality Assurance/Enterprise/Dynamic

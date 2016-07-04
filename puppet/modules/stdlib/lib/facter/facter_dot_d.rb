@@ -8,7 +8,7 @@
 # contains a cache TTL.  For foo.sh store the ttl as just
 # a number in foo.sh.ttl
 #
-# The cache is stored in /tmp/facts_cache.yaml as a mode
+# The cache is stored in $libdir/facts_dot_d.cache as a mode
 # 600 file and will have the end result of not calling your
 # fact scripts more often than is needed
 
@@ -48,7 +48,7 @@ class Facter::Util::DotD
         end
       end
     end
-  rescue Exception => e
+  rescue StandardError => e
     Facter.warn("Failed to handle #{file} as text facts: #{e.class}: #{e}")
   end
 
@@ -65,7 +65,7 @@ class Facter::Util::DotD
         setcode { v }
       end
     end
-  rescue Exception => e
+  rescue StandardError => e
     Facter.warn("Failed to handle #{file} as json facts: #{e.class}: #{e}")
   end
 
@@ -77,7 +77,7 @@ class Facter::Util::DotD
         setcode { v }
       end
     end
-  rescue Exception => e
+  rescue StandardError => e
     Facter.warn("Failed to handle #{file} as yaml facts: #{e.class}: #{e}")
   end
 
@@ -106,7 +106,7 @@ class Facter::Util::DotD
         end
       end
     end
-  rescue Exception => e
+  rescue StandardError => e
     Facter.warn("Failed to handle #{file} as script facts: #{e.class}: #{e}")
     Facter.debug(e.backtrace.join("\n\t"))
   end

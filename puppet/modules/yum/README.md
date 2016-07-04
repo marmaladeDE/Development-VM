@@ -48,7 +48,7 @@ This module requires functions provided by the Example42 Puppi module.
           extrarepo => '' ,
         }
 
-* Automatically copy in /etc/pki/rpm-gpg  all the rpm-gpg languageKeys known by the yum module (this was the "old" and intrusive behaviour, now each rpm-gpg key may be individually provided by the yum::manages_repos' gpgkey_source parameter)
+* Automatically copy in /etc/pki/rpm-gpg  all the rpm-gpg keys known by the yum module (this was the "old" and intrusive behaviour, now each rpm-gpg key may be individually provided by the yum::manages_repos' gpgkey_source parameter)
 
         class { 'yum':
           install_all_keys => true ,

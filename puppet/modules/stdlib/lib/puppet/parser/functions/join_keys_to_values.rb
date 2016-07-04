@@ -36,7 +36,7 @@ Would result in: ["a is 1","b is 2"]
             "string, but a #{separator.class} was given.")
     end
 
-    # Join the languageKeys to their values.
+    # Join the keys to their values.
     hash.map do |k,v|
       String(k) + separator + String(v)
     end

@@ -21,6 +21,7 @@ class apache::service (
   $service_enable = true,
   $service_ensure = 'running',
   $service_manage = true,
+  $service_restart = undef
 ) {
   # The base class must be included first because parameter defaults depend on it
   if ! defined(Class['apache::params']) {
@@ -37,11 +38,16 @@ class apache::service (
       $_service_ensure = undef
     }
   }
+
+  $service_hasrestart = $service_restart == undef
+
   if $service_manage {
     service { 'httpd':
-      ensure => $_service_ensure,
-      name   => $service_name,
-      enable => $service_enable,
+      ensure     => $_service_ensure,
+      name       => $service_name,
+      enable     => $service_enable,
+      restart    => $service_restart,
+      hasrestart => $service_hasrestart,
     }
   }
 }
