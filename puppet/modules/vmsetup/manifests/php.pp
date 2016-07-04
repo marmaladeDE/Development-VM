@@ -79,14 +79,7 @@ class vmsetup::php (
     }
   } else {
     if $version > 5.3 {
-      package{ 'software-properties-common':
-        ensure => latest,
-      }
-      exec { 'ondrey:ppa' :
-        command => "add-apt-repository ${release}",
-        notify  => Exec['apt_update'],
-        require => Package['software-properties-common']
-      }
+      apt::ppa { "$release": }
     }
   }
 

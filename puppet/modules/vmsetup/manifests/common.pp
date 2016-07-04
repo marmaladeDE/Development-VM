@@ -1,18 +1,6 @@
 class vmsetup::common {
   include vmsetup::params
-
-  class { 'apt':
-    always_apt_update    => false,
-    apt_update_frequency => undef,
-    disable_keys         => undef,
-    proxy_host           => false,
-    proxy_port           => '8080',
-    purge_sources_list   => false,
-    purge_sources_list_d => false,
-    purge_preferences_d  => false,
-    update_timeout       => undef,
-    fancy_progress       => undef
-  }
+  include apt
 
   augeas { "set umask":
     changes => [
@@ -42,36 +30,11 @@ class vmsetup::common {
       require => Exec["apt_update"]
   }
 
-  file { "/usr/local/sbin/check-primary-group":
-    content => "#/bin/sh
-if [ $# -ne 2]; then
-    echo \"Usage: \$0 <Group> <User>\"
-    exit 255
-fi
-
-GROUP=$(grep -E \"^\$1\" /etc/group)
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-
-GID=$(echo \$GROUP|cut -d\":\" -f 3)
-
-PGROUP=$(grep -E \"^\$2\" /etc/passwd)
-if [ $? -ne 0 ]; then
-    exit 1
-fi
-
-PGID=$(echo \$PGROUP|cut -d\":\" -f 4)
-
-[ \$GID -eq \$PGID ];
-",
-    mode => "+x"
+  user { "vagrant":
+    password => pw_hash('vagrant', 'SHA-512', 'v2'),
+    gid => 'www-data',
+    groups => ['www-data', 'vagrant']
   }
-  exec { "usermod -g www-data -aG vagrant vagrant":
-    unless => "check-primary-group www-data vagrant"
-  }
-
-  exec { 'echo "vagrant:vagrant" | chpasswd': }
 
   file { "/etc/bash_completion.d/bash_aliases":
     ensure  => file,
