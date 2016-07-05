@@ -28,6 +28,7 @@ node default {
   }
 
   include vmsetup::params
+  include vmsetup::common
 
   class { "vmsetup":
     phpVersion              => $phpVersion,

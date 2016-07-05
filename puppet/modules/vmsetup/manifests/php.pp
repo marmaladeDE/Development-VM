@@ -1,11 +1,11 @@
 class vmsetup::php (
-  $version = '5.4',
+  $version = 5.4,
   $install_zendguardloader = true,
   $install_ioncubeloader = false,
   $xdebug_remote_host = ''
 ) {
   case $version {
-    '5.5': {
+    5.5: {
       $dotdeb = false
       $release = 'ppa:ondrej/php5'
       $install_apc = false
@@ -15,7 +15,7 @@ class vmsetup::php (
       $php_prefix = "php5"
       $phpenmod = 'php5enmod'
     }
-    '5.6': {
+    5.6: {
       $dotdeb = false
       $release = 'ppa:ondrej/php5-5.6'
       $install_apc = false
@@ -25,7 +25,7 @@ class vmsetup::php (
       $php_prefix = "php5"
       $phpenmod = 'php5enmod'
     }
-    '5.4': {
+    5.4: {
       $dotdeb = true
       $release = 'wheezy'
       $install_apc = true
@@ -35,7 +35,7 @@ class vmsetup::php (
       $php_prefix = "php5"
       $phpenmod = 'php5enmod'
     }
-    '5.3': {
+    5.3: {
       $dotdeb = false
       $install_apc = true
       $install_xdebug = true
@@ -44,7 +44,7 @@ class vmsetup::php (
       $php_prefix = "php5"
       $phpenmod = 'php5enmod'
     }
-    '7.0': {
+    7.0: {
       $dotdeb = false
       $release = 'ppa:ondrej/php'
       $install_apc = false
@@ -79,7 +79,14 @@ class vmsetup::php (
     }
   } else {
     if $version > 5.3 {
-      apt::ppa { "$release": }
+      package{ 'software-properties-common':
+        ensure => latest
+      }
+
+      apt::ppa { "$release":
+        require => Package['software-properties-common'],
+        notify => Exec['apt_update']
+      }
     }
   }
 

@@ -38,7 +38,7 @@ node default {
     content => "[client]
 user=root
 password=root",
-    mode    => 0600,
+    mode    => "u=rw,og-rwx",
     owner   => 'vagrant',
     group   => 'vagrant',
     require => Package["mysql_client"]

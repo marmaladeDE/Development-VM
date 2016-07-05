@@ -7,12 +7,12 @@ class vmsetup::elasticsearch ($version = 1.4) {
   }
 
   apt::source { 'elasticsearch.org':
-    ensure      => present,
-    location    => "http://packages.elastic.co/elasticsearch/$version/debian",
-    release     => 'stable',
-    repos       => 'main',
-    require     => Exec["add_elasticsearch_key"],
-    include_src => false
+    ensure   => present,
+    location => "http://packages.elastic.co/elasticsearch/$version/debian",
+    release  => 'stable',
+    repos    => 'main',
+    require  => Exec["add_elasticsearch_key"],
+    include  => { 'src' => false }
   }
 
   package { 'elasticsearch':
@@ -68,18 +68,18 @@ class vmsetup::elasticsearch ($version = 1.4) {
     }
   }
   if (is_numeric($version) and $version >= 1.4 and $version < 2.0) {
-    if ($version == 1.4) {
-      $mvel_plugin_version = '1.4.1'
+    $mvel_plugin_version = $version ? {
+      1.4 => '1.4.1',
+      1.5 => '1.5.0',
+      1.6 => '1.6.0',
+      1.7 => '1.7.0',
+      default => undef
     }
-    if ($version == 1.5) {
-      $mvel_plugin_version = '1.5.0'
+
+    if $mvel_plugin_version == undef {
+      fail("Unknown elastic version!")
     }
-    if ($version == 1.6) {
-      $mvel_plugin_version = '1.6.0'
-    }
-    if ($version == 1.7) {
-      $mvel_plugin_version = '1.7.0'
-    }
+
     exec { 'elasticsearch::enable marvel':
       command => '/usr/share/elasticsearch/bin/plugin -i elasticsearch/marvel/latest',
       unless  => "/usr/share/elasticsearch/bin/plugin -l | grep -q 'marvel'",
