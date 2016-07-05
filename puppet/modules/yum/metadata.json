@@ -1,19 +1,47 @@
 {
-  "name": "example42-yum",
-  "version": "2.1.27",
-  "author": "Alessandro Franceschi",
-  "summary": "Puppet module for yum",
-  "license": "Apache2",
-  "source": "https://github.com/example42/puppet-yum",
-  "project_page": "http://www.example42.com",
-  "issues_url": "https://github.com/example42/puppet-yum/issues",
+  "name": "ceritsc-yum",
+  "version": "0.9.8",
+  "author": "ceritsc",
+  "summary": "YUM utilities",
+  "license": "MIT",
+  "source": "https://github.com/CERIT-SC/puppet-yum.git",
+  "project_page": "https://github.com/CERIT-SC/puppet-yum",
+  "issues_url": "https://github.com/CERIT-SC/puppet-yum/issues",
   "dependencies": [
-    {"name":"example42/puppi","version_requirement":">=2.0.0"}
+    {"name":"puppetlabs/stdlib","version_requirement":">= 4.2.0"}
   ],
-  "description": "This module installs and manages yum and several different yum repos",
-  "types": [
-  
+  "tags": [
+    "yum",
+    "package"
   ],
-  "checksums": {
-  }
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat"
+    },
+    {
+      "operatingsystem": "CentOS"
+    },
+    {
+      "operatingsystem": "OracleLinux"
+    },
+    {
+      "operatingsystem": "Scientific"
+    },
+    {
+      "operatingsystem": "SLES"
+    },
+    {
+      "operatingsystem": "SLED"
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "3.3"
+    }
+  ]
 }

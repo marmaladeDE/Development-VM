@@ -1,134 +1,153 @@
-# Puppet module: yum
+# Puppet yum module
 
-This is a Puppet module that manages Yum repositories for Centos RedHat and Scientific Linux
+## Please note this module is deprecated, future maintenance took over the Puppet Community. Please use new https://forge.puppet.com/puppet/yum
 
-Made by Alessandro Franceschi / Lab42
+This module provides helpful definitions for dealing with *yum*.
 
-Inspired by the Yum Immerda module: https://git.puppet.immerda.ch
+### Requirements
 
-Official site: http://www.example42.com
+Module has been tested on:
 
-Official git repository: http://github.com/example42/puppet-yum
+* Puppet 3.7.x
+* CentOS 6, 7
 
-Released under the terms of Apache 2 License.
+# Usage
 
-This module requires functions provided by the Example42 Puppi module.
+### yum
 
-## USAGE 
+Manage main Yum configuration.
 
-* Just leave the default options: Automatic detection of Operating System (RedHat, Centos, Scientific supported) Epel repo installation, keeping of local yum files, automatic updates disabled.
+```puppet
+class { 'yum':
+  keepcache         => false|true,
+  debuglevel        => number,
+  exactarch         => false|true,
+  obsoletes         => false|true,
+  gpgcheck          => false|true,
+  installonly_limit => number,
+  keep_kernel_devel => false|true,
+}
+```
 
-        class { 'yum':
-        }
+If `installonly_limit` is changed, purging of old kernel packages is triggered.
 
-* Enable automatic updates via cron (updatesd is supported only on 5)
+### yum::config
 
-        class { 'yum':
-          update => 'cron',
-        }
+Manage yum.conf.
 
+```puppet
+yum::config { 'installonly_limit':
+  ensure => 2,
+}
 
-* Purge local /etc/yum.repos.d/ and enforce its contents only via a custom source
+yum::config { 'debuglevel':
+  ensure => absent,
+}
+```
 
-        class { 'yum':
-          source_repo_dir => 'puppet:///modules/example42/yum/conf/',
-          clean_repos     => true,
-        }
+### yum::gpgkey
 
-* Enable EPEL and PuppetLabs repos
+Import/remove GPG RPM signing key.
 
-        class { 'yum':
-          extrarepo => [ 'epel' , 'puppetlabs' ],
-        }
+Key defined in recipe (inline):
 
+```puppet
+yum::gpgkey { '/etc/pki/rpm-gpg/RPM-GPG-KEY-puppet-smoketest1':
+  ensure  => present,
+  content => '-----BEGIN PGP PUBLIC KEY BLOCK-----
+...
+-----END PGP PUBLIC KEY BLOCK-----',
+}
+```
 
-* Do not include any extra repo (By default EPEL is added)
+Key stored on Puppet fileserver:
 
-        class { 'yum':
-          extrarepo => '' ,
-        }
+```puppet
+yum::gpgkey { '/etc/pki/rpm-gpg/RPM-GPG-KEY-elrepo.org':
+  ensure => present,
+  source => 'puppet:///modules/elrepo/RPM-GPG-KEY-elrepo.org',
+}
+```
 
-* Automatically copy in /etc/pki/rpm-gpg  all the rpm-gpg keys known by the yum module (this was the "old" and intrusive behaviour, now each rpm-gpg key may be individually provided by the yum::manages_repos' gpgkey_source parameter)
+### yum::plugin
 
-        class { 'yum':
-          install_all_keys => true ,
-        }
+Install or remove *yum* plugin:
 
-* Include a selected extra repo
+```puppet
+yum::plugin { 'versionlock':
+  ensure => present,
+}
+```
 
-        include yum::repo::puppetlabs
+### yum::versionlock
 
+Locks explicitly specified packages from updates. Package name must
+be precisely specified in format *`EPOCH:NAME-VERSION-RELEASE.ARCH`*.
+Wild card in package name is allowed or automatically appended,
+but be careful and always first check on target machine if your
+package is matched correctly! Following definitions create same
+configuration lines:
 
-## USAGE - Overrides and Customizations
-* Enable auditing without without making changes on existing yum configuration files
+```puppet
+yum::versionlock { '0:bash-4.1.2-9.el6_2.*':
+  ensure => present,
+}
 
-        class { 'yum':
-          audit_only => true
-        }
+yum::versionlock { '0:bash-4.1.2-9.el6_2.':
+  ensure => present,
+}
+```
 
+Correct name for installed package can be easily get by running e.g.:
 
-* Use custom sources for main config file
+```bash
+$ rpm -q bash --qf '%|EPOCH?{%{EPOCH}}:{0}|:%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n'
+0:bash-4.2.45-5.el7_0.4.x86_64
+```
 
-        class { 'yum':
-          source => [ "puppet:///modules/lab42/yum/yum.conf-${hostname}" , "puppet:///modules/lab42/yum/yum.conf" ],
-        }
+### yum::group
 
+Install or remove *yum* package group:
 
-* Use custom source directory for the whole configuration dir
+```puppet
+yum::group { 'X Window System':
+  ensure  => present,
+  timeout => 600,
+}
+```
 
-        class { 'yum':
-          source_dir       => 'puppet:///modules/lab42/yum/conf/',
-          source_dir_purge => false, # Set to true to purge any existing file not present in $source_dir
-        }
+### yum::install
 
-* Use custom template for main config file. Note that template and source arguments are alternative.
+Install or remove packages via *yum* install subcommand:
 
-        class { 'yum':
-          template => 'example42/yum/yum.conf.erb',
-        }
+From URL:
 
-* Automatically include a custom subclass
+```puppet
+yum::install { 'package-name':
+  ensure => present,
+  source => 'http://path/to/package/filename.rpm',
+}
+```
 
-        class { 'yum':
-          my_class => 'yum::example42',
-        }
+From local filesystem:
 
+```puppet
+yum::install { 'package-name':
+  ensure => present,
+  source => '/path/to/package/filename.rpm',
+}
+```
 
-## USAGE - Example42 extensions management
-* Activate puppi (recommended, but disabled by default)
+Please note that resource name must be same as installed package name.
 
-        class { 'yum':
-          puppi    => true,
-        }
+# Contributors
 
-* Activate puppi and use a custom puppi_helper template (to be provided separately with a puppi::helper define ) to customize the output of puppi commands
+* Eugene Dementiev <eugene@dementiev.eu>
+* Mark McKinstry <mmckinst@nexcess.net>
+* Trey Dockendorf <treydock@gmail.com>
+* Derek McEachern <a0216331@ti.com>
+* John Zimmerman <zimmermj@trimet.org>
 
-        class { 'yum':
-          puppi        => true,
-          puppi_helper => 'myhelper',
-        }
+***
 
-
-## OPERATING SYSTEMS SUPPORT
-
-REDHAT 7 - BETA
-
-REDHAT 6 - Full
-
-REDHAT 5 - Full
-
-REDHAT 4 - Partial
-
-CENTOS 6 - Full
-
-CENTOS 5 - Full
-
-CENTOS 4 - Partial
-
-SCIENTIFIC 6 - Full
-
-SCIENTIFIC 5 - Full
-
-AMAZON LINUX 3 (Sigh) - Partial
-
-[![Build Status](https://travis-ci.org/example42/puppet-yum.png?branch=master)](https://travis-ci.org/example42/puppet-yum)
+CERIT Scientific Cloud, <support@cerit-sc.cz>

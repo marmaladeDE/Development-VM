@@ -1,54 +1,46 @@
 # Define: yum::plugin
 #
-# Adds a yum plugin
+# This definition installs Yum plugin.
 #
-# Usage:
-# With standard source package:
-# yum::plugin { 'priorities': }
+# Parameters:
+#   [*ensure*]   - specifies if plugin should be present or absent
 #
-# With custom config file source
-# yum::plugin { 'priorities':
-#   source => 'puppet:///modules/example42/yum/plugin-priorities'
-# }
+# Actions:
 #
-# With custom package name (default is taken from $name)
-# yum::plugin { 'priorities':
-#   package_name => 'yum-priorities'
-# }
+# Requires:
+#   RPM based system
+#
+# Sample usage:
+#   yum::plugin { 'versionlock':
+#     ensure  => present,
+#   }
 #
 define yum::plugin (
-  $package_name = '',
-  $source       = '',
-  $enable       = true
-  ) {
-
-  include yum
-
-  $ensure = bool2ensure( $enable )
-
-  $yum_plugins_prefix = $yum::osver[0] ? {
-    '5'     => 'yum',
-    '6'     => 'yum-plugin',
-    default => 'yum-plugin',
+  $ensure     = present,
+  $pkg_prefix = undef,
+  $pkg_name   = ''
+) {
+  if $pkg_prefix {
+    $_pkg_prefix = $pkg_prefix
+  } else {
+    $_pkg_prefix = $::operatingsystemmajrelease ? {
+      5         => 'yum',
+      default   => 'yum-plugin'
+    }
   }
 
-  $real_package_name = $package_name ? {
-    ''      => "${yum_plugins_prefix}-${name}",
-    default => $package_name,
+  $_pkg_name = $pkg_name ? {
+    ''      => "${_pkg_prefix}-${name}",
+    default => "${_pkg_prefix}-${pkg_name}"
   }
 
-  package { $real_package_name :
-    ensure => $ensure
+  package { $_pkg_name:
+    ensure  => $ensure,
   }
 
-  if ( $source != '' ) {
-    file { "yum_plugin_conf_${name}":
-      ensure => $ensure,
-      path   => "${yum::plugins_config_dir}/${name}.conf",
-      owner  => root,
-      group  => root,
-      mode   => '0644',
-      source => $source,
+  if ! defined(Yum::Config['plugins']) {
+    yum::config { 'plugins':
+      ensure => 1,
     }
   }
 }
