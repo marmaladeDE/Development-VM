@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
         ENV['VAGRANT_DEFAULT_PROVIDER'] =  provider || 'virtualbox'
     end
 
-    hostname = $data['hostname'] || 'project.dev'
+    hostname = $data['hostname'] || 'project.vm'
 
     $data['nodes'].each do |nodeName, nodeConfig|
         config.vm.define nodeName, primary: (nodeConfig.has_key?('primary') ? nodeConfig['primary'] : false) do |node|
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
                 else
                     node.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
                     node.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
-                    node.vm.box_version = "1.0.1"
+#                     node.vm.box_version = "1.0.1"
                 end
             end
 
@@ -100,8 +100,7 @@ Vagrant.configure("2") do |config|
             if nodeConfig.has_key?('aliases') && Vagrant.has_plugin?('vagrant-hostsupdater')
                 node.hostsupdater.aliases = nodeConfig['aliases']
             end
-
-            node.vm.provision 'shell', inline: "echo Running apt-get update\napt-get -y -qq update"
+            node.vm.provision 'shell', path: "shell/apt-update"
 
             if nodeConfig.has_key?('pre-puppet')
                 node.vm.provision 'shell', inline: nodeConfig['pre-puppet'].join("\n")
@@ -127,10 +126,12 @@ Vagrant.configure("2") do |config|
                     manifestsPath = "../config/vm/puppet/manifests"
                 end
 
-                puppet.manifests_path = manifestsPath
-                puppet.manifest_file  = manifestFile
-                puppet.module_path    = $modulePaths
-                puppet.options = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
+                puppet.manifests_path   = manifestsPath
+                puppet.environment_path = ".."
+                puppet.environment      = "vm"
+                puppet.manifest_file    = manifestFile
+                puppet.module_path      = $modulePaths
+                puppet.options          = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
             end
 
             node.vm.post_up_message = "Your machine is reachable at IP: #{network_ip}"

@@ -14,7 +14,7 @@ end
 
 $data = configValues['config']
 
-Vagrant.require_version '>= 1.6.0'
+Vagrant.require_version '>= 1.8.0'
 
 if $data.has_key?('nodes')
     load "MultiNode.rb"

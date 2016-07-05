@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+LAST_UPDATE_FILE="/etc/apt/last-update"
+if [ -f ${LAST_UPDATE_FILE} -a -s ${LAST_UPDATE_FILE} -a -r ${LAST_UPDATE_FILE} ]; then
+    if [ $(cat ${LAST_UPDATE_FILE}) -gte $(date +%s) ]; then
+        exit 0
+    fi
+fi
+
+echo Running apt-get update
+apt-get -y -qq update
+date --date="00:00:00 tomorrow" +%s > ${LAST_UPDATE_FILE}

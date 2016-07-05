@@ -18,7 +18,7 @@ Vagrant.configure('2') do |config|
     else
       config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
       config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
-      config.vm.box_version = "1.0.1"
+#       config.vm.box_version = "1.0.1"
     end
   end
 
@@ -108,7 +108,7 @@ Vagrant.configure('2') do |config|
     $modulePaths.push("../config/vm/puppet/modules")
   end
 
-  config.vm.provision 'shell', inline: "echo Running apt-get update\napt-get -qq -y update"
+  config.vm.provision 'shell', path: "shell/apt-update"
 
   if data.has_key?('pre-puppet')
     config.vm.provision 'shell', inline: data['pre-puppet'].join("\n")
@@ -118,10 +118,13 @@ Vagrant.configure('2') do |config|
     puppet.facter = {
       'xdebug_remote_host' => xdebug_remote_host
     }
-    puppet.manifests_path = "puppet/manifests"
-    puppet.manifest_file  = "default.pp"
-    puppet.module_path    = $modulePaths
-    puppet.options = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
+
+    puppet.manifests_path   = "puppet/manifests"
+    puppet.environment_path = ".."
+    puppet.environment      = "vm"
+    puppet.manifest_file    = "default.pp"
+    puppet.module_path      = $modulePaths
+    puppet.options          = "--verbose --hiera_config /vagrant/puppet/hiera.yaml"
 
   end
 
