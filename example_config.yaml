@@ -2,11 +2,11 @@
 ### This is the single-vm configuration
 config:
   # hostname setting
-  hostname: 'my.project'
+  hostname: 'project.vm'
   # project folder that is linked to docroot
   webroot: 'web'
   # php-version possible options  ['5.3'|'5.4'|'5.5'|'5.6'|'7.0']
-  php-version: '5.5'
+  php-version: 5.5
   # should zend guard loader be installed [true|false]
   install-zendguardloader: true
   # should ioncube loader be installed [true|false]
@@ -15,16 +15,16 @@ config:
   install-elasticsearch: true
   # which version of elastic should be installed [0.90 up to current, defaults to 1.4]
   # ATTENTION: If you've a tailing null you must put the version into single quotes!
-  elastic-version: '1.4'
+  elastic-version: 1.4
   # create symlink from shared folder for webroot [true|false]
   use-shared-folder: true
   vm:
     # vm provider ['virtualbox'|'vmware_workstation'|'vmware_fusion']
     provider: 'virtualbox'
     # memory assigned to vm
-    memory: '1024'
+    memory: 1024
     # cpus assigned to vm
-    cpus: '1'
+    cpus: 1
     # customize network ip default is 192.168.42.100 for virtualbox and 192.168.33.100 for vmware
     private_network_ip: 192.168.42.110
 
@@ -54,7 +54,7 @@ config:
       # project folder that is linked to docroot
       webroot: web
       # PHP version possible options ['5.3'|'5.4'|'5.5'|'5.6'|'7.0']
-      php-version: '7.0'
+      php-version: 7.0
       # Port for the web server
       vhost-port: 80
       # Should ZendGuardLoader (ZGL) be installed [true|false]
@@ -71,7 +71,7 @@ config:
       manifest: elastic
       # which version of elastic should be installed [0.90 up to current, defaults to 1.4]
       # ATTENTION: If you've a tailing null you must put the version into single quotes!
-      elastic-version: '1.7'
+      elastic-version: 1.7
       vm:
         memory: 1024
         cpus: 1
