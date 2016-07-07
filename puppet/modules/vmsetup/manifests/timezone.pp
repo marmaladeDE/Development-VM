@@ -6,6 +6,6 @@ class vmsetup::timezone ($timezone = "Europe/Berlin") {
 
   exec {"Apply timezone":
     command => "/usr/sbin/dpkg-reconfigure -f noninteractive tzdata",
-    unless => "test \"$timezone\" = \"$(cat /etc/timezone)\""
+    require => File["/etc/timezone"]
   }
 }
