@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 LAST_UPDATE_FILE="/etc/apt/last-update"
 if [ -f ${LAST_UPDATE_FILE} -a -s ${LAST_UPDATE_FILE} -a -r ${LAST_UPDATE_FILE} ]; then
-    if [ $(cat ${LAST_UPDATE_FILE}) -gte $(date +%s) ]; then
+    if [ $(cat ${LAST_UPDATE_FILE}) -ge $(date +%s) ]; then
         exit 0
     fi
 fi
