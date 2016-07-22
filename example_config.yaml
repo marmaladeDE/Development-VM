@@ -27,13 +27,23 @@ config:
     cpus: 1
     # customize network ip default is 192.168.42.100 for virtualbox and 192.168.33.100 for vmware
     private_network_ip: 192.168.42.110
+  # You can specify aliases for the vagrant-hostsupdater plugin
+  aliases:
+    - "1st.project.vm"
+    - "2nd.project.vm"
+    - "3rd.project.vm"
 
+---
 ### And this one is for multiple VMs
+
+# The hostname for each node is set to <node-name>.<main-hostname>, for example db.project.vm, http.project.vm
+# The main hostname is mapped to the node with the "primary: true" configuration entry.
+
 config:
   # VM provider ['virtualbox'|'vmware_workstation'|'vmware_fusion']
   provider: virtualbox
   # The hostname of you VM
-  hostname: test-vm.dev
+hostname: project.vm
   # Nodes to manage
   nodes:
     # This is the name of the node
@@ -76,6 +86,9 @@ config:
         memory: 1024
         cpus: 1
         private_network_ip: 192.168.42.93
+      # You can also specify aliases for the vagrant-hostsupdater plugin per node
+      aliases:
+        - "search.project.vm"
     proxy:
       # Mark this VM as the default one
       primary: true
@@ -89,3 +102,6 @@ config:
         memory: 256
         cpus: 1
         private_network_ip: 192.168.42.90
+      # You can also specify aliases for the vagrant-hostsupdater plugin per node
+      aliases:
+        - "nginx.project.vm"
