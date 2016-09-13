@@ -101,6 +101,7 @@ Vagrant.configure("2") do |config|
                 node.hostsupdater.aliases = nodeConfig['aliases']
             end
             node.vm.provision 'shell', path: "shell/apt-update"
+            node.vm.provision 'shell', inline: "chown -R vagrant:vagrant /home/vagrant/.ssh/ && chmod -R u+rwX,og-rwx /home/vagrant/.ssh/"
 
             if nodeConfig.has_key?('pre-puppet')
                 node.vm.provision 'shell', inline: nodeConfig['pre-puppet'].join("\n")

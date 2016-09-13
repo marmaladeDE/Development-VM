@@ -7,7 +7,7 @@ if [ -f ${LAST_UPDATE_FILE} -a -s ${LAST_UPDATE_FILE} -a -r ${LAST_UPDATE_FILE} 
 fi
 
 echo "Updating apt-key for puppetlabs"
-apt-key adv --recv-keys --keyserver keys.gnupg.net 4BD6EC30
+apt-key adv --recv-keys --keyserver keys.gnupg.net 4BD6EC30 >/dev/null 2>&1
 
 echo "Running apt-get update"
 apt-get -y -qq update
