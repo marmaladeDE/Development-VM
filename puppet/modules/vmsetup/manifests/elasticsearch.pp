@@ -1,22 +1,38 @@
 class vmsetup::elasticsearch ($version = 1.4) {
   Exec { path => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin" ] }
 
+  $realVersion = "${version}"
+
   exec { 'add_elasticsearch_key':
     command => 'curl -L --silent "https://packages.elastic.co/GPG-KEY-elasticsearch" | sudo apt-key add -',
     unless  => 'apt-key list | grep -q elasticsearch'
   }
 
-  apt::source { 'elasticsearch.org':
-    ensure   => present,
-    location => "http://packages.elastic.co/elasticsearch/$version/debian",
-    release  => 'stable',
-    repos    => 'main',
-    require  => Exec["add_elasticsearch_key"],
-    include  => { 'src' => false }
+  if (versioncmp($realVersion, '2.0') >= 0) {
+    apt::source { 'elasticsearch.org':
+      ensure   => present,
+      location => "http://packages.elastic.co/elasticsearch/2.x/debian",
+      release  => 'stable',
+      repos    => 'main',
+      require  => Exec["add_elasticsearch_key"],
+      include  => { 'src' => false },
+      notify => Exec['apt_update']
+    }
+    $esEnsure = "${realVersion}"
+  } else {
+    apt::source { 'elasticsearch.org':
+      ensure   => present,
+      location => "http://packages.elastic.co/elasticsearch/$realVersion/debian",
+      release  => 'stable',
+      repos    => 'main',
+      require  => Exec["add_elasticsearch_key"],
+      include  => { 'src' => false }
+    }
+    $esEnsure = 'installed'
   }
 
   package { 'elasticsearch':
-    ensure  => installed,
+    ensure  => $esEnsure,
     require => [
       Apt::Source['elasticsearch.org'],
       Package['oracle-java8-installer']
@@ -31,7 +47,7 @@ class vmsetup::elasticsearch ($version = 1.4) {
     require    => Package['elasticsearch'],
   }
 
-  if ($version == '2.x') {
+  if (versioncmp($realVersion, '2.0') >= 0) {
     exec { 'elasticsearch::enable head':
       command => '/usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head',
       unless  => "/usr/share/elasticsearch/bin/plugin list | grep -q 'head'",
@@ -67,8 +83,8 @@ class vmsetup::elasticsearch ($version = 1.4) {
       notify  => Service['elasticsearch']
     }
   }
-  if (is_numeric($version) and $version >= 1.4 and $version < 2.0) {
-    $mvel_plugin_version = $version ? {
+  if (versioncmp($realVersion, '1.4') >= 0 and versioncmp($realVersion, '2.0') < 0) {
+    $mvel_plugin_version = $realVersion ? {
       1.4 => '1.4.1',
       1.5 => '1.5.0',
       1.6 => '1.6.0',
