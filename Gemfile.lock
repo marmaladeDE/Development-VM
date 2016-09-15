@@ -1,0 +1,12 @@
+GEM
+  specs:
+    httpclient (2.8.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  httpclient (= 2.8.0)
+
+BUNDLED WITH
+   1.13.1

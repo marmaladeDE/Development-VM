@@ -4,6 +4,23 @@ vagrant_dot  = (ENV['VAGRANT_DOTFILE_PATH'].to_s.split.join.length > 0) ? ENV['V
 
 require 'yaml'
 require "#{dir}/lib/ruby/deep_merge.rb"
+require 'httpclient'
+
+if File.file?("#{dir}/../config/vm/.api-config.yml")
+  apiConfig = YAML.load_file("#{dir}/../config/vm/.api-config.yml")
+  httpClient = HTTPClient.new
+  apiConfig['files'].each do |fileDownload|
+    localFilename = "#{dir}/../archives/#{fileDownload['filename']}"
+    if !Dir.exist?("#{dir}/../archives")
+      Dir.mkdir("#{dir}/../archives")
+    end
+    if !File.exist?(localFilename)
+      puts "Downloading project file: #{fileDownload['filename']}"
+      response = httpClient.get("#{apiConfig['url']}download/project-file/#{fileDownload['filename']}", nil, [['X-Auth-Token', apiConfig['token']]])
+      File.write(localFilename, response.body)
+    end
+  end
+end
 
 configValues = YAML.load_file("#{dir}/../config/vm/config.yaml")
 

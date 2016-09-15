@@ -1,0 +1,1 @@
+gem 'httpclient', '2.8.0'
