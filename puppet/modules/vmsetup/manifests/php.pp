@@ -7,23 +7,23 @@ class vmsetup::php (
   case $version {
     5.5: {
       $dotdeb = false
-      $release = 'ppa:ondrej/php5'
+      $release = 'ppa:ondrej/php'
       $install_apc = false
       $install_xdebug = true
-      $mod_path = '/usr/lib/php5/20121212/'
-      $conf_path = '/etc/php5/mods-available/'
-      $php_prefix = "php5"
-      $phpenmod = 'php5enmod'
+      $mod_path = '/usr/lib/php/20121212/'
+      $conf_path = '/etc/php/5.5/mods-available/'
+      $php_prefix = "php5.5"
+      $phpenmod = 'phpenmod -v 5.5 -s ALL'
     }
     5.6: {
       $dotdeb = false
-      $release = 'ppa:ondrej/php5-5.6'
+      $release = 'ppa:ondrej/php'
       $install_apc = false
       $install_xdebug = true
-      $mod_path = '/usr/lib/php5/20131226/'
-      $conf_path = '/etc/php5/mods-available/'
-      $php_prefix = "php5"
-      $phpenmod = 'php5enmod'
+      $mod_path = '/usr/lib/php/20131226/'
+      $conf_path = '/etc/php/5.6/mods-available/'
+      $php_prefix = "php5.6"
+      $phpenmod = 'phpenmod -v 5.6 -s ALL'
     }
     5.4: {
       $dotdeb = true
@@ -55,6 +55,18 @@ class vmsetup::php (
       $conf_path = '/etc/php/7.0/mods-available/'
       $php_prefix = "php7.0"
       $phpenmod = 'phpenmod -v 7.0 -s ALL'
+    }
+    7.1: {
+      $dotdeb = false
+      $release = 'ppa:ondrej/php'
+      $install_apc = false
+      $install_xdebug = true
+      $skip_zendguardloader = true
+      $skip_ioncubeloader = true
+      $mod_path = '/usr/lib/php/20160303'
+      $conf_path = '/etc/php/7.1/mods-available/'
+      $php_prefix = "php7.1"
+      $phpenmod = 'phpenmod -v 7.1 -s ALL'
     }
   }
 
@@ -90,19 +102,31 @@ class vmsetup::php (
     }
   }
 
-  # php5-mhash and php5-json are provided by php5-common
+  if $version < 7.0 {
+    $php_mysql_package = "$php_prefix-mysqlnd"
+  } else {
+    $php_mysql_package = "$php_prefix-mysql"
+  }
   package {
     [
-      "php-pear",
       "$php_prefix",
       "$php_prefix-common",
       "$php_prefix-cli",
+      "$php_prefix-bz2",
       "$php_prefix-curl",
       "$php_prefix-dev",
       "$php_prefix-gd",
+      "$php_prefix-iconv",
+      "$php_prefix-imagick",
       "$php_prefix-intl",
+      "$php_prefix-json",
       "$php_prefix-mcrypt",
-      "$php_prefix-recode"
+      $php_mysql_package,
+      "$php_prefix-phar",
+      "$php_prefix-recode",
+      "$php_prefix-xdebug",
+      "$php_prefix-xsl",
+      "$php_prefix-yaml"
     ]:
       ensure  => latest,
       notify  => Service["httpd"],
@@ -110,44 +134,6 @@ class vmsetup::php (
         Exec["apt_update"],
         Package["httpd"]
       ]
-  }
-  if $version < 7.0 {
-    package {
-      [
-        "$php_prefix-imagick",
-        "$php_prefix-mysqlnd",
-        "$php_prefix-xsl"
-      ]:
-        ensure  => latest,
-        notify  => Service["httpd"],
-        require => [
-          Exec["apt_update"],
-          Package["httpd"]
-        ]
-    }
-
-    # php5-xdebug is currently not available for php 5.6 on debian wheezy
-    package { "$php_prefix-xdebug":
-      ensure  => latest,
-      notify  => Service["httpd"],
-      require => [
-        Exec["apt_update"]
-      ]
-    }
-  } else {
-    # php5-xdebug is currently not available for php 5.6 on debian wheezy
-    package {
-      [
-        "php-xdebug",
-        "php-imagick",
-        "$php_prefix-mysql"
-      ]:
-        ensure  => latest,
-        notify  => Service["httpd"],
-        require => [
-          Exec["apt_update"]
-        ]
-    }
   }
 
   if $install_apc {
