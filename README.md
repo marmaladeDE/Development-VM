@@ -92,3 +92,14 @@ Specify the array vm.forwards like shown in the following example whre we forwar
         host: 9200
         guest: 9200
 ```
+
+### Elasticsearch gets not installed ###
+
+Do you get problems with installing elasticsearch? There are some know issues:
+
+* ES 5.x is not supprted yet
+* You must specify a exact version number
+
+__Solution:__ 
+
+Elasticsearch veriosn must be set with three digits like 1.4.2, 1.7.6, 2.4.2 or similar.
