@@ -85,10 +85,10 @@ class vmsetup::elasticsearch ($version = 1.4) {
   }
   if (versioncmp($realVersion, '1.4') >= 0 and versioncmp($realVersion, '2.0') < 0) {
     $mvel_plugin_version = $realVersion ? {
-      1.4 => '1.4.1',
-      1.5 => '1.5.0',
-      1.6 => '1.6.0',
-      1.7 => '1.7.0',
+      "1.4" => '1.4.1',
+      "1.5" => '1.5.0',
+      "1.6" => '1.6.0',
+      "1.7" => '1.7.0',
       default => undef
     }
 
