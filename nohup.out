@@ -1,2 +1,0 @@
-OpenJDK 64-Bit Server VM warning: ignoring option MaxPermSize=350m; support was removed in 8.0
-[  12143]   WARN - t.connections.RemoteConnection - Forced closing file system of sftp://sport-conrad.vm:22/ in @aaefbb 
