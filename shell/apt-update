@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 LAST_UPDATE_FILE="/etc/apt/last-update"
 if [ -f ${LAST_UPDATE_FILE} -a -s ${LAST_UPDATE_FILE} -a -r ${LAST_UPDATE_FILE} ]; then
     if [ $(cat ${LAST_UPDATE_FILE}) -ge $(date +%s) ]; then
@@ -7,9 +9,9 @@ if [ -f ${LAST_UPDATE_FILE} -a -s ${LAST_UPDATE_FILE} -a -r ${LAST_UPDATE_FILE} 
 fi
 
 echo "Updating apt-key for puppetlabs"
-apt-key adv --recv-keys --keyserver keys.gnupg.net 4BD6EC30 >/dev/null || exit $?
-apt-key adv --recv-keys --keyserver keys.gnupg.net 7F438280EF8D349F >/dev/null || exit $?
+apt-key adv --recv-keys --keyserver keys.gnupg.net 4BD6EC30 >/dev/null
+apt-key adv --recv-keys --keyserver keys.gnupg.net 7F438280EF8D349F >/dev/null
 
 echo "Running apt-get update"
-apt-get -y -qq update >/dev/null || exit $?
+apt-get -y -qq update >/dev/null
 date --date="00:00:00 tomorrow" +%s > ${LAST_UPDATE_FILE}

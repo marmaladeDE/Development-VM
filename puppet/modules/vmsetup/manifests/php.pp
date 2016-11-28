@@ -10,6 +10,8 @@ class vmsetup::php (
       $release = 'ppa:ondrej/php'
       $install_apc = false
       $install_xdebug = true
+      $skip_zendguardloader = false
+      $skip_ioncubeloader = false
       $mod_path = '/usr/lib/php/20121212/'
       $conf_path = '/etc/php/5.5/mods-available/'
       $php_prefix = "php5.5"
@@ -20,6 +22,8 @@ class vmsetup::php (
       $release = 'ppa:ondrej/php'
       $install_apc = false
       $install_xdebug = true
+      $skip_zendguardloader = false
+      $skip_ioncubeloader = false
       $mod_path = '/usr/lib/php/20131226/'
       $conf_path = '/etc/php/5.6/mods-available/'
       $php_prefix = "php5.6"
@@ -30,6 +34,8 @@ class vmsetup::php (
       $release = 'wheezy'
       $install_apc = true
       $install_xdebug = true
+      $skip_zendguardloader = false
+      $skip_ioncubeloader = false
       $mod_path = '/usr/lib/php5/20100525/'
       $conf_path = '/etc/php5/mods-available/'
       $php_prefix = "php5"
@@ -39,6 +45,8 @@ class vmsetup::php (
       $dotdeb = false
       $install_apc = true
       $install_xdebug = true
+      $skip_zendguardloader = false
+      $skip_ioncubeloader = false
       $mod_path = "/usr/lib/php5/20090626/"
       $conf_path = '/etc/php5/conf.d/'
       $php_prefix = "php5"
@@ -120,6 +128,7 @@ class vmsetup::php (
       "$php_prefix-imagick",
       "$php_prefix-intl",
       "$php_prefix-json",
+      "$php_prefix-mbstring",
       "$php_prefix-mcrypt",
       $php_mysql_package,
       "$php_prefix-phar",

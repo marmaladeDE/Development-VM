@@ -29,7 +29,7 @@ node default {
 
   if defined("vmcustoms::$node_name") {
     class { "vmcustoms::$node_name":
-      config => $yaml_values
+      config => $::vmsetup::params::yaml_values
     }
   }
 }
