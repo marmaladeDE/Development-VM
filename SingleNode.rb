@@ -18,7 +18,7 @@ Vagrant.configure('2') do |config|
     else
       config.vm.box     = "puppetlabs/ubuntu-14.04-64-puppet"
       config.vm.box_url = "puppetlabs/ubuntu-14.04-64-puppet"
-#       config.vm.box_version = "1.0.1"
+       config.vm.box_version = "1.0.2"
     end
   end
 
