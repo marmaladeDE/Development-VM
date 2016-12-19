@@ -1,16 +1,16 @@
 class apache::mod::event (
   $startservers           = '2',
   $maxclients             = '150',
-  $maxrequestworkers      = undef,
   $minsparethreads        = '25',
   $maxsparethreads        = '75',
   $threadsperchild        = '25',
   $maxrequestsperchild    = '0',
-  $maxconnectionsperchild = undef,
   $serverlimit            = '25',
   $apache_version         = $::apache::apache_version,
   $threadlimit            = '64',
   $listenbacklog          = '511',
+  $maxrequestworkers      = '250',
+  $maxconnectionsperchild = '0',
 ) {
   if defined(Class['apache::mod::itk']) {
     fail('May not include both apache::mod::event and apache::mod::itk on the same node')
@@ -40,7 +40,6 @@ class apache::mod::event (
   # - $serverlimit
   file { "${::apache::mod_dir}/event.conf":
     ensure  => file,
-    mode    => $::apache::file_mode,
     content => template('apache/mod/event.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],

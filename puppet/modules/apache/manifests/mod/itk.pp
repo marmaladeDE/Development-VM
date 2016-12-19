@@ -47,7 +47,6 @@ class apache::mod::itk (
   # - $maxrequestsperchild
   file { "${::apache::mod_dir}/itk.conf":
     ensure  => file,
-    mode    => $::apache::file_mode,
     content => template('apache/mod/itk.conf.erb'),
     require => Exec["mkdir ${::apache::mod_dir}"],
     before  => File[$::apache::mod_dir],

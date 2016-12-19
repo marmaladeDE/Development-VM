@@ -80,7 +80,6 @@ class apache (
   $use_systemd            = $::apache::params::use_systemd,
   $mime_types_additional  = $::apache::params::mime_types_additional,
   $file_mode              = $::apache::params::file_mode,
-  $root_directory_options = $::apache::params::root_directory_options,
 ) inherits ::apache::params {
   validate_bool($default_vhost)
   validate_bool($default_ssl_vhost)
@@ -189,7 +188,6 @@ class apache (
       purge   => $purge_mod_dir,
       notify  => Class['Apache::Service'],
       require => Package['httpd'],
-      before  => Anchor['::apache::modules_set_up'],
     }
   }
 
@@ -242,7 +240,6 @@ class apache (
   }
 
   concat { $ports_file:
-    ensure  => present,
     owner   => 'root',
     group   => $::apache::params::root_group,
     mode    => $::apache::file_mode,
@@ -250,6 +247,7 @@ class apache (
     require => Package['httpd'],
   }
   concat::fragment { 'Apache ports header':
+    ensure  => present,
     target  => $ports_file,
     content => template('apache/ports_header.erb')
   }

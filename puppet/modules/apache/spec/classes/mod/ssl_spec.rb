@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe 'apache::mod::ssl', :type => :class do
-  it_behaves_like "a mod class, without including apache"
+  let :pre_condition do
+    'include apache'
+  end
   context 'on an unsupported OS' do
     let :facts do
       {
@@ -158,15 +160,6 @@ describe 'apache::mod::ssl', :type => :class do
         }
       end
       it { is_expected.to contain_file('ssl.conf').with_content(/^\s+SSLOpenSSLConfCmd DHParameters "foo.pem"$/)}
-    end
-
-    context 'setting ssl_mutex' do
-      let :params do
-        {
-          :ssl_mutex => 'posixsem',
-        }
-      end
-      it { is_expected.to contain_file('ssl.conf').with_content(%r{^  SSLMutex posixsem$})}
     end
   end
 end

@@ -31,7 +31,7 @@ AccessFileName .htaccess
 </FilesMatch>
 
 <Directory />
-  Options <%= Array(@root_directory_options).join(' ') %>
+  Options FollowSymLinks
   AllowOverride None
 </Directory>
 
