@@ -1,4 +1,4 @@
-class vmsetup::elasticsearch ($version = 1.4, $heapSize=256) {
+class vmsetup::elasticsearch ($version = 1.4, $heap_size='256m') {
   Exec { path => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin" ] }
 
   $realVersion = "${version}"
@@ -23,7 +23,7 @@ class vmsetup::elasticsearch ($version = 1.4, $heapSize=256) {
 
     file_line { 'Set Elasticsearch min heap size':
       path => '/etc/elasticsearch/jvm.options',
-      line => "-Xms${heapSize}m",
+      line => "-Xms${heap_size}",
       match => '^-Xms.*$',
       require => Package['elasticsearch'],
       notify  => Service['elasticsearch'],
@@ -31,7 +31,7 @@ class vmsetup::elasticsearch ($version = 1.4, $heapSize=256) {
 
     file_line { 'Set Elasticsearch max heap size':
       path => "/etc/elasticsearch/jvm.options",
-      line => "-Xmx${heapSize}m",
+      line => "-Xmx${heap_size}",
       match => '^-Xmx.*$',
       require => Package['elasticsearch'],
       notify  => Service['elasticsearch'],

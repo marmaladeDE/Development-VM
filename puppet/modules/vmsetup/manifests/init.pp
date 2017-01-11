@@ -70,7 +70,7 @@ class vmsetup (
 
   if $install_mysql {
     if $install_elasticsearch {
-      $mysql_total_mem = floor($::vmsetup::params::globalConfig['vm']['memory'] * 0.4)
+      $mysql_total_mem = floor($::vmsetup::params::globalConfig['vm']['memory'] * 0.35)
     } else {
       $mysql_total_mem = floor($::vmsetup::params::globalConfig['vm']['memory'] * 0.5)
     }
@@ -130,9 +130,11 @@ password=root",
   }
 
   if $install_elasticsearch {
+    $es_heap_size = floor($::vmsetup::params::globalConfig['vm']['memory'] * 0.25)
+
     class { "vmsetup::elasticsearch":
       version => $elastic_version,
-      heapSize => floor($::vmsetup::params::nodeConfig['vm']['memory'] * 0.3),
+      heap_size => "${es_heap_size}m",
     }
   }
 }
