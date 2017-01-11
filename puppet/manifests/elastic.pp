@@ -5,8 +5,11 @@ node default {
 
   contain vmsetup::java
 
+  $es_heap_size = floor($::vmsetup::params::nodeConfig['vm']['memory'] * 0.5)
+
   class { "vmsetup::elasticsearch":
-    version => $::vmsetup::params::nodeConfig['elastic-version']
+    version => $::vmsetup::params::nodeConfig['elastic-version'],
+    heap_size => "${es_heap_size}m",
   }
 
   if defined("vmcustoms::$node_name") {

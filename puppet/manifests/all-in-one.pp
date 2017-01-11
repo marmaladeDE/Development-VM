@@ -27,7 +27,11 @@ node default {
     vhost_aliases     => $vhost_aliases
   }
 
-  $mysql_total_mem = floor($nodeConfig['vm']['memory'] * 0.5)
+  if $nodeConfig['install-elasticsearch'] {
+    $mysql_total_mem = floor($nodeConfig['vm']['memory'] * 0.35)
+  } else {
+    $mysql_total_mem = floor($nodeConfig['vm']['memory'] * 0.5)
+  }
   $key_buffer_size = floor($mysql_total_mem * 0.25)
   $innodb_buffer_pool_size = floor($mysql_total_mem * 0.75)
 
@@ -81,8 +85,11 @@ password=root",
   if $nodeConfig['install-elasticsearch'] {
     contain vmsetup::java
 
+    $es_heap_size = floor($::vmsetup::params::nodeConfig['vm']['memory'] * 0.25)
+
     class { "vmsetup::elasticsearch":
-      version => $nodeConfig['elastic-version']
+      version => $nodeConfig['elastic-version'],
+      heap_size => "${es_heap_size}m",
     }
   }
 }
