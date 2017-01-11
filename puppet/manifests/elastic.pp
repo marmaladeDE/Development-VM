@@ -6,7 +6,8 @@ node default {
   contain vmsetup::java
 
   class { "vmsetup::elasticsearch":
-    version => $::vmsetup::params::nodeConfig['elastic-version']
+    version => $::vmsetup::params::nodeConfig['elastic-version'],
+    heapSize => floor($::vmsetup::params::nodeConfig['vm']['memory'] * 0.5),
   }
 
   if defined("vmcustoms::$node_name") {

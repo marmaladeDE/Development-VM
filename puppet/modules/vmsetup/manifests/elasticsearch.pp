@@ -1,34 +1,73 @@
-class vmsetup::elasticsearch ($version = 1.4) {
+class vmsetup::elasticsearch ($version = 1.4, $heapSize=256) {
   Exec { path => [ "/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/local/bin", "/usr/local/sbin" ] }
 
   $realVersion = "${version}"
 
-  exec { 'add_elasticsearch_key':
-    command => 'curl -L --silent "https://packages.elastic.co/GPG-KEY-elasticsearch" | sudo apt-key add -',
-    unless  => 'apt-key list | grep -q elasticsearch'
-  }
+  if (versioncmp($realVersion, '5.0') >= 0) {
+    exec { 'add_elasticsearch_key':
+      command => 'wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -',
+      unless  => 'apt-key list | grep -q elasticsearch'
+    }
 
-  if (versioncmp($realVersion, '2.0') >= 0) {
+    $pluginBinary = "elasticsearch-plugin"
+
     apt::source { 'elasticsearch.org':
       ensure   => present,
-      location => "http://packages.elastic.co/elasticsearch/2.x/debian",
+      location => "https://artifacts.elastic.co/packages/5.x/apt",
       release  => 'stable',
       repos    => 'main',
       require  => Exec["add_elasticsearch_key"],
       include  => { 'src' => false },
-      notify => Exec['apt_update']
+      notify   => Exec['apt_update']
     }
+
+    file_line { 'Set Elasticsearch min heap size':
+      path => '/etc/elasticsearch/jvm.options',
+      line => "-Xms${heapSize}m",
+      match => '^-Xms.*$',
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+
+    file_line { 'Set Elasticsearch max heap size':
+      path => "/etc/elasticsearch/jvm.options",
+      line => "-Xmx${heapSize}m",
+      match => '^-Xmx.*$',
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+
     $esEnsure = "${realVersion}"
   } else {
-    apt::source { 'elasticsearch.org':
-      ensure   => present,
-      location => "http://packages.elastic.co/elasticsearch/$realVersion/debian",
-      release  => 'stable',
-      repos    => 'main',
-      require  => Exec["add_elasticsearch_key"],
-      include  => { 'src' => false }
+    exec { 'add_elasticsearch_key':
+      command => 'curl -L --silent "https://packages.elastic.co/GPG-KEY-elasticsearch" | sudo apt-key add -',
+      unless  => 'apt-key list | grep -q elasticsearch'
     }
-    $esEnsure = 'installed'
+
+    $pluginBinary = "plugin"
+
+    if (versioncmp($realVersion, '2.0') >= 0) {
+      apt::source { 'elasticsearch.org':
+        ensure   => present,
+        location => "http://packages.elastic.co/elasticsearch/2.x/debian",
+        release  => 'stable',
+        repos    => 'main',
+        require  => Exec["add_elasticsearch_key"],
+        include  => { 'src' => false },
+        notify => Exec['apt_update']
+      }
+      $esEnsure = "${realVersion}"
+    } else {
+      apt::source { 'elasticsearch.org':
+        ensure   => present,
+        location => "http://packages.elastic.co/elasticsearch/$realVersion/debian",
+        release  => 'stable',
+        repos    => 'main',
+        require  => Exec["add_elasticsearch_key"],
+        include  => { 'src' => false }
+      }
+      $esEnsure = 'installed'
+    }
   }
 
   package { 'elasticsearch':
@@ -44,27 +83,15 @@ class vmsetup::elasticsearch ($version = 1.4) {
     hasrestart => true,
     hasstatus  => true,
     enable     => true,
-    require    => Package['elasticsearch'],
+    require    => [
+      Package['elasticsearch'],
+    ]
   }
 
   if (versioncmp($realVersion, '2.0') >= 0) {
-    exec { 'elasticsearch::enable head':
-      command => '/usr/share/elasticsearch/bin/plugin install mobz/elasticsearch-head',
-      unless  => "/usr/share/elasticsearch/bin/plugin list | grep -q 'head'",
-      require => Package['elasticsearch'],
-      notify  => Service['elasticsearch'],
-    }
-
-    exec { 'elasticsearch::enable HQ':
-      command => '/usr/share/elasticsearch/bin/plugin install royrusso/elasticsearch-HQ',
-      unless  => "/usr/share/elasticsearch/bin/plugin list | grep -q 'hq'",
-      require => Package['elasticsearch'],
-      notify  => Service['elasticsearch'],
-    }
-
     exec { 'elasticsearch::enable analysis-icu':
-      command => '/usr/share/elasticsearch/bin/plugin install analysis-icu',
-      unless  => "/usr/share/elasticsearch/bin/plugin list | grep -q 'analysis-icu'",
+      command => "/usr/share/elasticsearch/bin/${pluginBinary} install analysis-icu",
+      unless  => "/usr/share/elasticsearch/bin/${pluginBinary} list | grep -q 'analysis-icu'",
       require => Package['elasticsearch'],
       notify  => Service['elasticsearch']
     }
@@ -81,6 +108,22 @@ class vmsetup::elasticsearch ($version = 1.4) {
       unless  => "cat /etc/elasticsearch/elasticsearch.yml | grep -q 'network.host: 0.0.0.0'",
       require => Package['elasticsearch'],
       notify  => Service['elasticsearch']
+    }
+  }
+  # elasticsearch-head and elasticsearch-HQ are not compatible with ES >= 5.0
+  if (versioncmp($realVersion, '2.0') >= 0 and versioncmp($realVersion, '5.0') < 0) {
+    exec { 'elasticsearch::enable head':
+      command => "/usr/share/elasticsearch/bin/${pluginBinary} install mobz/elasticsearch-head",
+      unless  => "/usr/share/elasticsearch/bin/${pluginBinary} list | grep -q 'head'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
+    }
+
+    exec { 'elasticsearch::enable HQ':
+      command => "/usr/share/elasticsearch/bin/${pluginBinary} install royrusso/elasticsearch-HQ",
+      unless  => "/usr/share/elasticsearch/bin/${pluginBinary} list | grep -q 'hq'",
+      require => Package['elasticsearch'],
+      notify  => Service['elasticsearch'],
     }
   }
   if (versioncmp($realVersion, '1.4') >= 0 and versioncmp($realVersion, '2.0') < 0) {
