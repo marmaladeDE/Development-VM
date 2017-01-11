@@ -97,7 +97,6 @@ Specify the array vm.forwards like shown in the following example whre we forwar
 
 Do you get problems with installing elasticsearch? There are some know issues:
 
-* ES 5.x is not supprted yet
 * You must specify a exact version number
 
 __Solution:__ 
