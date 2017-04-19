@@ -1,0 +1,27 @@
+---
+- name: "Set-up main vhost"
+  template:
+    src: vhost.conf.j2
+    dest: /etc/apache2/sites-available/{{ hostname }}
+  notify: restart apache
+
+- name: "Create docroot"
+  file:
+    path: /srv/{{ hostname }}/{{ docroot }}
+    owner: www-data
+    group: www-data
+    mode: 0775
+    state: directory
+
+- name: "Disable default VHost"
+  file:
+    dest: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: restart apache
+
+- name: "Enable VHost"
+  file:
+    src: /etc/apache2/sites-available/{{ hostname }}
+    dest: /etc/apache2/sites-enabled/{{ hostname }}.conf
+    state: link
+  notify: restart apache

@@ -1,0 +1,8 @@
+---
+- name: "Enable Apache modules"
+  apache2_module: name={{item}}
+  with_items:
+    - rewrite
+    - headers
+    - deflate
+  notify: restart apache

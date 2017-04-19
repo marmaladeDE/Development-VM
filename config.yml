@@ -1,0 +1,38 @@
+hostname: otrance.vm
+network-ip: 192.168.42.8/29
+groups:
+  backend-web: ["apache"]
+  backend-db: ["mysql"]
+
+nodes:
+  apache:
+    type: httpd
+    primary: true
+    vm:
+      memory: 1024
+      cpus: 1
+      shared-folders:
+        ../backend: "/project/backend"
+        ../frontend: "/project/frontend"
+    php:
+      version: 7.1
+      configs:
+        date:
+          timezone: Europe/Berlin
+        xdebug:
+          cli_color: 1
+          max_nesting_level: 500
+          remote_enable: 1
+          idekey: PHPSTORM
+          var_display_max_children: 512
+          var_display_max_data: 2560
+          var_display_max_depth: 200
+          profiler_enable_trigger: 1
+    docroot: web
+  mysql:
+    type: mysql
+    vm:
+      memory: 2048
+      cpus: 2
+    databases:
+      - "otrance"

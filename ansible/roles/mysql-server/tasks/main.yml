@@ -1,0 +1,37 @@
+---
+- name: "Install MySQL server"
+  apt:
+    name: "mysql-server"
+
+- name: "Change MySQL address binding"
+  lineinfile:
+    path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+    regexp: "^bind-address"
+    line: "bind-address = 0.0.0.0"
+  notify: restart mysql
+
+- name: "Set MySQL MyISAM key buffer"
+  lineinfile:
+    path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+    regexp: "^key_buffer_size"
+    line: "key_buffer_size = {{ (vm.memory * 0.1875)|int }}M"
+  notify: restart mysql
+
+- name: "Set MySQL InnoDB key buffer"
+  lineinfile:
+    path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+    regexp: "^innodb_buffer_pool_size"
+    line: "innodb_buffer_pool_size = {{ (vm.memory * 0.5625)|int }}M"
+  notify: restart mysql
+
+- name: "Create MySQL user root@{{ mysql.network_mask }}"
+  mysql_user:
+    name: root
+    host: "{{ mysql.network_mask }}"
+    password: root
+    priv: "*.*:ALL"
+
+- name: "Create database(s)"
+  mysql_db: name={{item}}, collation="utf8_general_ci"
+  with_items: "{{ databases }}"
+  when: databases is defined

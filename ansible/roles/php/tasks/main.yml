@@ -1,0 +1,44 @@
+---
+- name: "Install PHP 7.1"
+  apt: name=php{{item}} state=installed
+  with_items:
+    - "{{ php.version }}"
+    - "{{ php.version }}-bcmath"
+    - "{{ php.version }}-bz2"
+    - "{{ php.version }}-cli"
+    - "{{ php.version }}-curl"
+    - "{{ php.version }}-dev"
+    - "{{ php.version }}-fileinfo"
+    - "{{ php.version }}-gd"
+    - "{{ php.version }}-gmagick"
+    - "{{ php.version }}-iconv"
+    - "{{ php.version }}-intl"
+    - "{{ php.version }}-json"
+    - "{{ php.version }}-mbstring"
+    - "{{ php.version }}-mcrypt"
+    - "{{ php.version }}-mysql"
+    - "{{ php.version }}-pdo"
+    - "{{ php.version }}-pdo-mysql"
+    - "{{ php.version }}-phar"
+    - "{{ php.version }}-posix"
+    - "{{ php.version }}-recode"
+    - "{{ php.version }}-sockets"
+    - "{{ php.version }}-tokenizer"
+    - "{{ php.version }}-xdebug"
+    - "{{ php.version }}-xml"
+    - "{{ php.version }}-xmlreader"
+    - "{{ php.version }}-xmlwriter"
+    - "{{ php.version }}-xsl"
+    - "{{ php.version }}-zip"
+  notify: restart apache
+
+- name: "Write custom PHP config"
+  template:
+    src: php-custom.ini.j2
+    dest: /etc/php/{{ php.version }}/mods-available/custom.ini
+
+- name: "Enable custom PHP config"
+  command: "/usr/sbin/phpenmod -v {{ php.version }} -s ALL custom"
+  args:
+    creates: "/etc/php/{{ php.version }}/apache2/conf.d/85-custom.ini"
+  notify: restart apache

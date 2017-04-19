@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+    ServerName {{ hostname }}
+
+    ServerAdmin webmaster@{{ hostname }}
+    DocumentRoot /srv/{{ hostname }}/{{ docroot }}
+    <Directory /srv/{{ hostname }}/{{ docroot }}>
+        AllowOverride all
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ hostname }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ hostname }}-access.log combined
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

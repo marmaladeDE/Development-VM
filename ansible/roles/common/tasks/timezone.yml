@@ -1,0 +1,5 @@
+---
+- name: Set timezone
+  timezone:
+    name: Europe/Berlin
+#  become: true

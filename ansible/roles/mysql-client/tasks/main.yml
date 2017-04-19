@@ -1,0 +1,9 @@
+---
+- name: "Install MySQL shell client"
+  apt:
+    name: "mysql-client"
+
+- name: "Set MySQL client config"
+  template:
+    src: .my.cnf.j2
+    dest: "/home/{{ ssh_user }}/.my.cnf"

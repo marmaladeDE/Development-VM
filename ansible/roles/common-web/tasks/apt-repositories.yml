@@ -1,0 +1,4 @@
+---
+- name: "Add Ondřej Surý PHP PPA"
+  apt_repository:
+    repo: "ppa:ondrej/php"

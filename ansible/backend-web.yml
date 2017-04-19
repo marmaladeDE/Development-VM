@@ -1,0 +1,7 @@
+---
+- hosts: backend-web
+  roles:
+    - common-web
+    - apache
+    - php
+    - mysql-client
