@@ -32,6 +32,6 @@
     priv: "*.*:ALL"
 
 - name: "Create database(s)"
-  mysql_db: name={{item}}, collation="utf8_general_ci"
+  mysql_db: name={{item}} collation="utf8_general_ci"
   with_items: "{{ databases }}"
   when: databases is defined
