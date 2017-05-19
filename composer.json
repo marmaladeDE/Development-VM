@@ -1,4 +1,7 @@
 {
   "name":"marm/dev-vm",
-  "type":"marm-dev-vm"
+  "type":"library",
+  "require": {
+    "composer/installers": "~1.0"
+  }
 }
