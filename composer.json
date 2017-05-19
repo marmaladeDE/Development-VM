@@ -1,6 +1,6 @@
 {
   "name":"marm/dev-vm",
-  "type":"library",
+  "type":"oxid-module",
   "require": {
     "composer/installers": "~1.0"
   }
