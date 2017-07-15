@@ -1,5 +1,5 @@
-hostname: otrance.vm
-network-ip: 192.168.42.8/29
+hostname: techtree.vm
+network-ip: 192.168.42.16/29
 groups:
   backend-web: ["apache"]
   backend-db: ["mysql"]
@@ -12,8 +12,7 @@ nodes:
       memory: 1024
       cpus: 1
       shared-folders:
-        ../backend: "/project/backend"
-        ../frontend: "/project/frontend"
+        ../techtree: "/project/techtree"
     php:
       version: 7.1
       configs:
@@ -35,4 +34,4 @@ nodes:
       memory: 2048
       cpus: 2
     databases:
-      - "otrance"
+      - "techtree"
