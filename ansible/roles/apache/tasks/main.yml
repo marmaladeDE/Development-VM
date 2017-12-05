@@ -1,4 +1,4 @@
 ---
-- include: install.yml
-- include: modules.yml
-- include: vhost.yml
+- include_tasks: install.yml
+- include_tasks: modules.yml
+- include_tasks: vhost.yml

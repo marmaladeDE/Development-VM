@@ -1,5 +1,5 @@
-hostname: techtree.vm
-network-ip: 192.168.42.16/29
+hostname: symfony.vm
+network-ip: 192.168.42.48/29
 groups:
   backend-web: ["apache"]
   backend-db: ["mysql"]
@@ -8,11 +8,15 @@ nodes:
   apache:
     type: httpd
     primary: true
+    useSahredFolder: true
+    vhostSharedFolder: "/project"
+    # this is based on the path of config.yaml
+    customPlaybook: ansible/awesome-playbook.yml
     vm:
       memory: 1024
       cpus: 1
       shared-folders:
-        ../techtree: "/project/techtree"
+        ../projekt: "/project"
     php:
       version: 7.1
       configs:
@@ -27,11 +31,11 @@ nodes:
           var_display_max_data: 2560
           var_display_max_depth: 200
           profiler_enable_trigger: 1
-    docroot: web
+    docroot: public
   mysql:
     type: mysql
     vm:
       memory: 2048
       cpus: 2
     databases:
-      - "techtree"
+      - "project"

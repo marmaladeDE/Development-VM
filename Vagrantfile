@@ -2,15 +2,16 @@
 # vi: set ft=ruby :
 
 dir = File.dirname(File.expand_path(__FILE__))
+configPath = File.expand_path("#{dir}/../config/vm")
 
 require 'yaml'
 require "#{dir}/lib/ruby/deep_merge.rb"
 require "#{dir}/lib/ruby/cidr.rb"
 
-configValues = YAML.load_file("#{dir}/config.yml")
+configValues = YAML.load_file("#{configPath}/config.yaml")
 
-if File.file?("#{dir}/config.local.yml")
-  custom = YAML.load_file("#{dir}/config.local.yml")
+if File.file?("#{configPath}/config.local.yaml")
+  custom = YAML.load_file("#{configPath}/config.local.yaml")
   configValues.deep_merge!(custom)
 end
 
@@ -18,7 +19,7 @@ Vagrant.require_version '>= 1.8.0'
 
 Vagrant.configure("2") do |config|
 
-    hostname = configValues['hostname'] || "otrance.vm"
+    hostname = configValues['hostname'] || "project.vm"
 
     ansible_groups = configValues['groups']
 
@@ -92,11 +93,24 @@ Vagrant.configure("2") do |config|
                 ansible_extra_vars['php']['configs']['xdebug']['remote_host'] = hostIp
             end
 
-            node.vm.provision "ansible_local" do |ansible|
+            node.vm.provision "main", type: 'ansible_local' do |ansible|
                 ansible.playbook = "ansible/sites.yml"
-                ansible.sudo = true
+                ansible.become = true
+                ansible.compatibility_mode = "2.0"
                 ansible.groups = ansible_groups
                 ansible.extra_vars = ansible_extra_vars
+            end
+            
+            if nodeConfig.has_key?('customPlaybook')
+                customPlaybookPath = "/tmp/config/vm"
+                node.vm.synced_folder configPath, customPlaybookPath
+                node.vm.provision "custom", type:'ansible_local' do |ansible|
+                    ansible.playbook = "#{customPlaybookPath}/#{nodeConfig['customPlaybook']}"
+                    ansible.become = true
+                    ansible.compatibility_mode = "2.0"
+                    ansible.groups = ansible_groups
+                    ansible.extra_vars = ansible_extra_vars
+                end
             end
 
             node.vm.post_up_message = "Your VM #{node.vm.hostname} got the IP #{hostIps[nodeName]}"

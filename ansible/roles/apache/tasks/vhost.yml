@@ -2,8 +2,15 @@
 - name: "Set-up main vhost"
   template:
     src: vhost.conf.j2
-    dest: /etc/apache2/sites-available/{{ hostname }}
+    dest: /etc/apache2/sites-available/000-{{ hostname }}
   notify: restart apache
+
+- file:
+    path: /srv/{{ hostname }}
+    state: absent
+  when:
+    - useSahredFolder
+    - vhostSharedFolder is defined
 
 - name: "Create docroot"
   file:
@@ -12,6 +19,16 @@
     group: www-data
     mode: 0775
     state: directory
+  when: not useSahredFolder or vhostSharedFolder is undefined
+
+- name: "Symlink to shared folder"
+  file:
+    dest: /srv/{{ hostname }}
+    src: "{{ vhostSharedFolder }}"
+    state: link
+  when:
+    - useSahredFolder
+    - vhostSharedFolder is defined
 
 - name: "Disable default VHost"
   file:

@@ -1,3 +1,4 @@
 /.vagrant
-/config.local.yml
+/config.local.yaml
 /*-console.log
+/ansible/sites.retry

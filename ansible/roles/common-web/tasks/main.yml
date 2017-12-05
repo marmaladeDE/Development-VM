@@ -1,2 +1,2 @@
 ---
-- include: apt-repositories.yml
+- include_tasks: apt-repositories.yml

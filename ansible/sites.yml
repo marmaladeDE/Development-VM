@@ -3,5 +3,5 @@
   roles:
     - common
 
-- include: backend-web.yml
-- include: backend-db.yml
+- import_playbook: backend-web.yml
+- import_playbook: backend-db.yml
