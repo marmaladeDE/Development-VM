@@ -5,12 +5,13 @@
     dest: /etc/apache2/sites-available/{{ hostname }}
   notify: restart apache
 
-- file:
+- name: "Remove docroot for symlink creation"
+  file:
     path: /srv/{{ hostname }}
     state: absent
   when:
     - useSahredFolder
-    - vhostSharedFolder is defined
+    - vhostSymlinkTarget is defined
 
 - name: "Create docroot"
   file:
@@ -19,16 +20,16 @@
     group: www-data
     mode: 0775
     state: directory
-  when: not useSahredFolder or vhostSharedFolder is undefined
+  when: not useSahredFolder or vhostSymlinkTarget is undefined
 
 - name: "Symlink to shared folder"
   file:
     dest: /srv/{{ hostname }}
-    src: "{{ vhostSharedFolder }}"
+    src: "{{ vhostSymlinkTarget }}"
     state: link
   when:
     - useSahredFolder
-    - vhostSharedFolder is defined
+    - vhostSymlinkTarget is defined
 
 - name: "Disable default VHost"
   file:

@@ -10,9 +10,30 @@ require "#{dir}/lib/ruby/cidr.rb"
 
 configValues = YAML.load_file("#{configPath}/config.yaml")
 
+if configValues.has_key?('imports')
+    importedConfig = {}
+    configValues['imports'].each do |importFile|
+        if File.file?("#{configPath}/#{importFile}")
+            imported = YAML.load_file("#{configPath}/#{importFile}")
+            importedConfig.deep_merge!(imported)
+        end
+    end
+    configValues.deep_merge!(importedConfig)
+end
+
 if File.file?("#{configPath}/config.local.yaml")
-  custom = YAML.load_file("#{configPath}/config.local.yaml")
-  configValues.deep_merge!(custom)
+    custom = YAML.load_file("#{configPath}/config.local.yaml")
+    if custom.has_key?('imports')
+        customImportedConfig = {}
+        custom['imports'].each do |importFile|
+            if File.file?("#{configPath}/#{importFile}")
+                customImported = YAML.load_file("#{configPath}/#{importFile}")
+                customImportedConfig.deep_merge!(customImported)
+            end
+        end
+        custom.deep_merge!(customImportedConfig)
+    end
+    configValues.deep_merge!(custom)
 end
 
 Vagrant.require_version '>= 1.8.0'
@@ -47,7 +68,6 @@ Vagrant.configure("2") do |config|
     config.vm.provision "main", preserve_order: true, type: 'ansible_local' do |ansible|
         ansible.playbook = "ansible/sites.yml"
         ansible.become = true
-        ansible.compatibility_mode = "2.0"
         ansible.groups = ansible_groups
     end
 
@@ -57,7 +77,6 @@ Vagrant.configure("2") do |config|
         config.vm.provision "custom", preserve_order: true, type:'ansible_local' do |ansible|
             ansible.playbook = "#{vmConfigPath}/#{configValues['customPlaybook']}"
             ansible.become = true
-            ansible.compatibility_mode = "2.0"
             ansible.groups = ansible_groups
         end
     end
@@ -113,12 +132,14 @@ Vagrant.configure("2") do |config|
             end
 
             node.vm.provision "main", type: 'ansible_local' do |ansible|
+                ansible.compatibility_mode = "2.0"
                 ansible.extra_vars = ansible_extra_vars
             end
 
             if configValues.has_key?('customPlaybook')
                 node.vm.provision "custom", type:'ansible_local' do |ansible|
                     ansible.extra_vars = ansible_extra_vars
+                    ansible.compatibility_mode = "2.0"
                 end
             end
 

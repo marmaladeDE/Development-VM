@@ -1,3 +1,4 @@
+
 hostname: symfony.vm
 network-ip: 192.168.42.48/29
 
@@ -8,12 +9,17 @@ groups:
   backend-web: ["apache"]
   backend-db: ["mysql"]
 
+# If you want to split your config file, you can specify multiple additional config files:
+#imports:
+#  - nodes/apache.yaml
+#  - nodes/mysql.yaml
+
 nodes:
   apache:
     type: httpd
     primary: true
     useSahredFolder: true
-    vhostSharedFolder: "/project"
+    vhostSymlinkTarget: "/project"
     vm:
       memory: 1024
       cpus: 1
