@@ -1,0 +1,6 @@
+- name: "Importing dump files for database"
+  mysql_db:
+    target: "{{config_path}}/{{item}}"
+    name: "{{db.key}}"
+    state: import
+  with_items: "{{db.value}}"

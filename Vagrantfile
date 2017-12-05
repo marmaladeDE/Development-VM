@@ -40,6 +40,28 @@ Vagrant.configure("2") do |config|
         ipIndex += 1
     end
 
+    config.vm.provision "shell", preserve_order: true do |shell|
+        shell.path = "shell/init"
+    end
+
+    config.vm.provision "main", preserve_order: true, type: 'ansible_local' do |ansible|
+        ansible.playbook = "ansible/sites.yml"
+        ansible.become = true
+        ansible.compatibility_mode = "2.0"
+        ansible.groups = ansible_groups
+    end
+
+    vmConfigPath = "/tmp/config/vm"
+    config.vm.synced_folder configPath, vmConfigPath
+    if configValues.has_key?('customPlaybook')
+        config.vm.provision "custom", preserve_order: true, type:'ansible_local' do |ansible|
+            ansible.playbook = "#{vmConfigPath}/#{configValues['customPlaybook']}"
+            ansible.become = true
+            ansible.compatibility_mode = "2.0"
+            ansible.groups = ansible_groups
+        end
+    end
+
     configValues['nodes'].each do |nodeName, nodeConfig|
         isPrimaryNode = (nodeConfig.has_key?('primary') ? nodeConfig['primary'] : false)
 
@@ -73,10 +95,6 @@ Vagrant.configure("2") do |config|
                 end
             end
 
-            node.vm.provision "shell" do |shell|
-                shell.path = "shell/init"
-            end
-
             ansible_extra_vars = {
                 "hostname": node.vm.hostname,
                 "vm_ip": hostIps[nodeName],
@@ -84,7 +102,8 @@ Vagrant.configure("2") do |config|
                 "mysql": {
                     "server_ip": mysqlIp,
                     "network_mask": mysqlNetworkMask
-                }
+                },
+                "config_path": vmConfigPath || "/vagrant"
             }
 
             ansible_extra_vars.deep_merge!(nodeConfig)
@@ -94,21 +113,11 @@ Vagrant.configure("2") do |config|
             end
 
             node.vm.provision "main", type: 'ansible_local' do |ansible|
-                ansible.playbook = "ansible/sites.yml"
-                ansible.become = true
-                ansible.compatibility_mode = "2.0"
-                ansible.groups = ansible_groups
                 ansible.extra_vars = ansible_extra_vars
             end
-            
-            if nodeConfig.has_key?('customPlaybook')
-                customPlaybookPath = "/tmp/config/vm"
-                node.vm.synced_folder configPath, customPlaybookPath
+
+            if configValues.has_key?('customPlaybook')
                 node.vm.provision "custom", type:'ansible_local' do |ansible|
-                    ansible.playbook = "#{customPlaybookPath}/#{nodeConfig['customPlaybook']}"
-                    ansible.become = true
-                    ansible.compatibility_mode = "2.0"
-                    ansible.groups = ansible_groups
                     ansible.extra_vars = ansible_extra_vars
                 end
             end

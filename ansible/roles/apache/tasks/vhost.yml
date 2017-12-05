@@ -2,7 +2,7 @@
 - name: "Set-up main vhost"
   template:
     src: vhost.conf.j2
-    dest: /etc/apache2/sites-available/000-{{ hostname }}
+    dest: /etc/apache2/sites-available/{{ hostname }}
   notify: restart apache
 
 - file:
@@ -39,6 +39,6 @@
 - name: "Enable VHost"
   file:
     src: /etc/apache2/sites-available/{{ hostname }}
-    dest: /etc/apache2/sites-enabled/{{ hostname }}.conf
+    dest: /etc/apache2/sites-enabled/000-{{ hostname }}.conf
     state: link
   notify: restart apache

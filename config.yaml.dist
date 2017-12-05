@@ -1,5 +1,9 @@
 hostname: symfony.vm
 network-ip: 192.168.42.48/29
+
+# This is based on the path of config.yaml
+customPlaybook: ansible/awesome-playbook.yml
+
 groups:
   backend-web: ["apache"]
   backend-db: ["mysql"]
@@ -10,8 +14,6 @@ nodes:
     primary: true
     useSahredFolder: true
     vhostSharedFolder: "/project"
-    # this is based on the path of config.yaml
-    customPlaybook: ansible/awesome-playbook.yml
     vm:
       memory: 1024
       cpus: 1
@@ -38,4 +40,10 @@ nodes:
       memory: 2048
       cpus: 2
     databases:
-      - "project"
+      project:
+      # List of SQL dumps to import into the DB "project".
+        - dumps/project.sql
+        - dumps/project.sql.gz
+        - dumps/project.sql.bz2
+      # Use tilde (~) to skip dump import (e.g. you have no dump)
+      project2: ~

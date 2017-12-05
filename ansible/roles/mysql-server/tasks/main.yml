@@ -32,6 +32,20 @@
     priv: "*.*:ALL"
 
 - name: "Create database(s)"
-  mysql_db: name={{item}} collation="utf8_general_ci"
-  with_items: "{{ databases }}"
-  when: databases is defined
+  mysql_db:
+    name: "{{db.key}}"
+    collation: "utf8_general_ci"
+  with_dict: "{{databases}}"
+  loop_control:
+    loop_var: db
+  when:
+    - databases is defined
+
+- name: "Import DB dumps"
+  include_tasks: real_import.yml
+  with_dict: "{{databases}}"
+  loop_control:
+    loop_var: db
+  when:
+    - databases is defined
+    - db.value is sequence
