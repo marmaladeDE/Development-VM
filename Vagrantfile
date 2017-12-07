@@ -108,6 +108,7 @@ Vagrant.configure("2") do |config|
                 virtualbox.cpus = nodeConfig['vm']['cpus']
                 virtualbox.name = node.vm.hostname
                 virtualbox.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+                virtualbox.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
 
                 if nodeConfig['cpus'].to_i > 1
                     virtualbox.ioapic = true
