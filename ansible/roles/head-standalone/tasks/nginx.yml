@@ -1,0 +1,21 @@
+- name: "Install nginx"
+  apt:
+    name: "nginx"
+    state: installed
+
+- name: "Remove default vhost"
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: "Create new vhost"
+  template:
+    src: es-head-proxy.j2
+    dest: /etc/nginx/sites-available/es-head
+
+- name: "Activate vhost"
+  file:
+    path: /etc/nginx/sites-enabled/es-head
+    src: /etc/nginx/sites-available/es-head
+    state: link
+  notify: restart nginx

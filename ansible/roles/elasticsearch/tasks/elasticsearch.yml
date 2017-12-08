@@ -1,0 +1,80 @@
+- name: "Add Elasticsearch repository key"
+  apt_key:
+    url: 'https://packages.elastic.co/GPG-KEY-elasticsearch'
+
+- name: "Add Elasticsearch 2.x repository"
+  apt_repository:
+    repo: "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main"
+  when:
+    - elasticsearch.version|version_compare('2.0', '>=')
+    - elasticsearch.version|version_compare('5.0', '<')
+
+- name: "Add Elasticsearch 5.x repository"
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
+  when:
+    - elasticsearch.version|version_compare('5.0', '>=')
+    - elasticsearch.version|version_compare('6.0', '<')
+
+- name: "Add Elasticsearch 6.x repository"
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/6.x/apt stable main"
+  when:
+    - elasticsearch.version|version_compare('6.0', '>=')
+    - elasticsearch.version|version_compare('7.0', '<')
+
+- name: "Install Elasticsearch"
+  apt:
+    name: "elasticsearch={{elasticsearch.version}}"
+    state: installed
+
+- name: "Stick ES version"
+  dpkg_selections:
+    name: 'eleasticsearch'
+    selection: hold
+
+- name: "Enable script support"
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^script\\.inline:"
+    line: "script.inline: on"
+  notify: restart elasticsearch
+
+- name: "Set host binding IP"
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^network\\.host:"
+    line: "network.host: 0.0.0.0"
+  notify: restart elasticsearch
+
+- name: "CORS : Enable"
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^http\\.cors\\.enabled:"
+    line: "http.cors.enabled: true"
+  notify: restart elasticsearch
+
+- name: "CORS : Allow all hosts"
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^http\\.cors\\.allow-origin:"
+    line: 'http.cors.allow-origin: "*"'
+  notify: restart elasticsearch
+
+- name: "Set min heap size"
+  lineinfile:
+    path: "/etc/elasticsearch/jvm.options"
+    regexp: "^-Xms"
+    line: "-Xms{{ (vm.memory * elasticsearch_memory_factor)|int }}M"
+  notify: restart elasticsearch
+  when:
+    - elasticsearch.version|version_compare('5.0', '>=')
+
+- name: "Set max heap size"
+  lineinfile:
+    path: "/etc/elasticsearch/jvm.options"
+    regexp: "^-Xmx"
+    line: "-Xmx{{ (vm.memory * elasticsearch_memory_factor)|int }}M"
+  notify: restart elasticsearch
+  when:
+    - elasticsearch.version|version_compare('5.0', '>=')

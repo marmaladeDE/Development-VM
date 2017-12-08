@@ -1,0 +1,2 @@
+- include_tasks: elasticsearch.yml
+- include_tasks: plugins.yml

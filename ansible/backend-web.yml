@@ -1,5 +1,5 @@
 ---
-- hosts: backend-web
+- hosts: web
   roles:
     - common-web
     - apache

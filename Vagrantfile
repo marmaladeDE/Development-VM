@@ -81,6 +81,8 @@ Vagrant.configure("2") do |config|
         end
     end
 
+    singleNodeMode = (configValues['nodes'].length == 1)
+
     configValues['nodes'].each do |nodeName, nodeConfig|
         isPrimaryNode = (nodeConfig.has_key?('primary') ? nodeConfig['primary'] : false)
 
@@ -121,12 +123,18 @@ Vagrant.configure("2") do |config|
                 "ssh_user": nodeConfig.has_key?('ssh_user') ? nodeConfig['ssh_user'] : "ubuntu",
                 "mysql": {
                     "server_ip": mysqlIp,
-                    "network_mask": mysqlNetworkMask
+                    "network_mask": mysqlNetworkMask,
+                    "memory_factor": {
+                        "myisam": singleNodeMode ? 0.125 : 0.1875,
+                        "innodb": singleNodeMode ? 0.375 : 0.5625
+                    }
                 },
-                "config_path": vmConfigPath || "/vagrant"
+                "config_path": vmConfigPath || "/vagrant",
+                "elasticsearch_memory_factor": singleNodeMode ? 0.125 : 0.5
             }
 
             ansible_extra_vars.deep_merge!(nodeConfig)
+            # print ansible_extra_vars.inspect
 
             if ansible_extra_vars.has_key?('php')
                 ansible_extra_vars['php']['configs']['xdebug']['remote_host'] = hostIp

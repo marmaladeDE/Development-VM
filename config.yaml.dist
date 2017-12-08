@@ -53,3 +53,10 @@ nodes:
         - dumps/project.sql.bz2
       # Use tilde (~) to skip dump import (e.g. you have no dump)
       project2: ~
+  search:
+    type: elastic
+    vm:
+      memory: 1024
+      cpus: 2
+    elasticsearch:
+      version: "5.4.3"

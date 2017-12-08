@@ -1,0 +1,8 @@
+server {
+    listen 80 default_server;
+    server_name "{{hostname}}";
+
+    location / {
+        proxy_pass http://localhost:9100/;
+    }
+}

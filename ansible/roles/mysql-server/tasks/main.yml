@@ -14,14 +14,14 @@
   lineinfile:
     path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
     regexp: "^key_buffer_size"
-    line: "key_buffer_size = {{ (vm.memory * 0.1875)|int }}M"
+    line: "key_buffer_size = {{ (vm.memory * mysql.memory_factor.myisam)|int }}M"
   notify: restart mysql
 
 - name: "Set MySQL InnoDB key buffer"
   lineinfile:
     path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
     regexp: "^innodb_buffer_pool_size"
-    line: "innodb_buffer_pool_size = {{ (vm.memory * 0.5625)|int }}M"
+    line: "innodb_buffer_pool_size = {{ (vm.memory * mysql.memory_factor.innodb)|int }}M"
   notify: restart mysql
 
 - name: "Create MySQL user root@{{ mysql.network_mask }}"

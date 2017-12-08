@@ -1,0 +1,13 @@
+---
+- name: "Restart Head application"
+  systemd:
+    name: es-head
+    state: restarted
+    daemon_reload: yes
+  listen: restart es-head
+
+- name: "Restart nginx"
+  service:
+    name: nginx
+    state: restarted
+  listen: restart nginx

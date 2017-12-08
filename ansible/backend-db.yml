@@ -1,5 +1,5 @@
 ---
-- hosts: backend-db
+- hosts: database
   roles:
     - mysql-client
     - mysql-server

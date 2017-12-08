@@ -1,0 +1,14 @@
+[Unit]
+Description=Elasticsearch Head (standalone)
+Documentation=http://mobz.github.io/elasticsearch-head
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/npm run start
+WorkingDirectory=/opt/elasticsearch-head/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
