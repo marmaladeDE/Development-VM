@@ -1,4 +1,9 @@
 ---
-- include_tasks: install.yml
-- include_tasks: modules.yml
-- include_tasks: vhost.yml
+- name: "Include apache install tasks"
+  include_tasks: install.yml
+
+- name: "Include apache modules tasks"
+  include_tasks: modules.yml
+
+- name: "Include apache vhost tasks"
+  include_tasks: vhost.yml

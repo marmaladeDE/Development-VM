@@ -1,2 +1,4 @@
 ---
-- include_tasks: apt-repositories.yml
+- name: "Add Ondřej Surý PHP PPA"
+  apt_repository:
+    repo: "ppa:ondrej/php"

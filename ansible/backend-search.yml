@@ -1,7 +1,0 @@
----
-- hosts: elasticsearch
-  roles:
-    - { role: swapfile, swapfile_size: "{{vm.memory}}M", swapfile_swappiness: 10 }
-    - java
-    - head-standalone
-    - elasticsearch

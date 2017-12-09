@@ -1,2 +1,5 @@
-- include_tasks: elasticsearch.yml
-- include_tasks: plugins.yml
+- name: "Include Elasticsearch tasks"
+  include_tasks: elasticsearch.yml
+
+- name: "Include Elasticesearch plugin tasks"
+  include_tasks: plugins.yml

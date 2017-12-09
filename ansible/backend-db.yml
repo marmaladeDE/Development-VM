@@ -1,5 +1,0 @@
----
-- hosts: database
-  roles:
-    - mysql-client
-    - mysql-server

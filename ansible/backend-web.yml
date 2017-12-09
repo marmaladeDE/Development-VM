@@ -1,7 +1,0 @@
----
-- hosts: web
-  roles:
-    - common-web
-    - apache
-    - php
-    - mysql-client

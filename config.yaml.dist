@@ -18,7 +18,7 @@ nodes:
   apache:
     type: httpd
     primary: true
-    useSahredFolder: true
+    useSharedFolder: true
     vhostSymlinkTarget: "/project"
     vm:
       memory: 1024

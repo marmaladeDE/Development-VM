@@ -12,6 +12,11 @@
     dest: "/opt/elasticsearch-head"
     remote_src: yes
     extra_opts: ['--strip-components=1']
+
+- name: "Change group and owner for Elasticsearch HEAD"
+  file:
+    path: "/opt/elasticsearch-head"
+    state: directory
     owner: ubuntu
     group: ubuntu
 
@@ -25,10 +30,16 @@
   template:
     src: es-head.service.j2
     dest: "/lib/systemd/system/es-head.service"
-  notify: restart es-head
+
+- name: "Restart Head application"
+  systemd:
+    name: es-head
+    state: started
+    daemon_reload: yes
 
 - name: "Replace default ES host"
   replace:
     path: "/opt/elasticsearch-head/_site/app.js"
     regexp: "localhost:9200"
     replace: "{{ hostname }}:9200"
+  notify: restart es-head

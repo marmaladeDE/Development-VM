@@ -1,0 +1,18 @@
+- name: "Enable mod_proxy and mod_proxy_http"
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  with_items: [ "proxy", "proxy_http", "proxy_html" ]
+
+- name: "Set-up head VHost"
+  template:
+    src: es-head.apache-proxy.j2
+    dest: /etc/apache2/sites-available/head.{{ hostname }}
+  notify: restart apache
+
+- name: "Enable head VHost"
+  file:
+    src: /etc/apache2/sites-available/head.{{ hostname }}
+    dest: /etc/apache2/sites-enabled/001-head.{{ hostname }}.conf
+    state: link
+  notify: restart apache

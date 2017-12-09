@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+    ServerName head.{{ hostname }}
+
+    ServerAdmin webmaster@head.{{ hostname }}
+
+    ProxyPass / http://{{hostname}}:9100/
+    ProxyPassReverse / http://{{hostname}}:9100/
+    ProxyPreserveHost    On
+
+    <Proxy http://localhost:8000/service1>
+        Require all granted
+        Options none
+    </Proxy>
+
+    ErrorLog ${APACHE_LOG_DIR}/head.{{ hostname }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/head.{{ hostname }}-access.log combined
+</VirtualHost>
+
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

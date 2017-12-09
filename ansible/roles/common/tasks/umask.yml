@@ -1,7 +1,0 @@
----
-- name: "Set UMASK for pam_umask to 002"
-  lineinfile:
-    path: /etc/login.defs
-    regexp: '^(UMASK)\s+022$'
-    line: '\1 002'
-    backrefs: yes

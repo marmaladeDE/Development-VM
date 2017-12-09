@@ -105,6 +105,21 @@ Vagrant.configure("2") do |config|
                 end
             end
 
+            if singleNodeMode
+                if !nodeConfig.has_key?('aliases')
+                    nodeConfig['aliases'] = Array.new
+                end
+
+                hostInESGroup = configValues['groups']['elasticsearch'].index(nodeName)
+                if configValues['groups'].has_key?('elasticsearch') && !hostInESGroup.nil?
+                    nodeConfig['aliases'].push("head.#{hostname}")
+                end
+            end
+
+            if nodeConfig.has_key?('aliases') && Vagrant.has_plugin?('vagrant-hostsupdater')
+                node.hostsupdater.aliases = nodeConfig['aliases']
+            end
+
             node.vm.provider :virtualbox do |virtualbox|
                 virtualbox.memory = nodeConfig['vm']['memory']
                 virtualbox.cpus = nodeConfig['vm']['cpus']
@@ -130,7 +145,8 @@ Vagrant.configure("2") do |config|
                     }
                 },
                 "config_path": vmConfigPath || "/vagrant",
-                "elasticsearch_memory_factor": singleNodeMode ? 0.125 : 0.5
+                "elasticsearch_memory_factor": singleNodeMode ? 0.125 : 0.5,
+                "is_single_node_mode": singleNodeMode
             }
 
             ansible_extra_vars.deep_merge!(nodeConfig)

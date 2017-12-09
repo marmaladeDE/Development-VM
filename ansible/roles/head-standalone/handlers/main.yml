@@ -3,7 +3,6 @@
   systemd:
     name: es-head
     state: restarted
-    daemon_reload: yes
   listen: restart es-head
 
 - name: "Restart nginx"
@@ -11,3 +10,9 @@
     name: nginx
     state: restarted
   listen: restart nginx
+
+- name: "Restart apache"
+  service:
+    name: apache2
+    state: restarted
+  listen: "restart apache"

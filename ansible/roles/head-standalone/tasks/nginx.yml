@@ -10,7 +10,7 @@
 
 - name: "Create new vhost"
   template:
-    src: es-head-proxy.j2
+    src: es-head.nginx-proxy.j2
     dest: /etc/nginx/sites-available/es-head
 
 - name: "Activate vhost"
