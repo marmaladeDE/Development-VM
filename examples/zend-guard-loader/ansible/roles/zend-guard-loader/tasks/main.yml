@@ -1,0 +1,4 @@
+---
+- name: "Include Zend Guard Loader tasks (PHP 5.6 only)"
+  include_tasks: zend-guard-loader.yml
+  when: php.version|version_compare('5.6', '==')

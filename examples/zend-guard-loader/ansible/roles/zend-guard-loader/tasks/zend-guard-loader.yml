@@ -1,0 +1,28 @@
+---
+- name: "Create directory for Zend Guard Loader"
+  file:
+    path: "/opt/zend-guard-loader"
+    state: directory
+    recurse: yes
+
+- name: "Download and extract Zend Guard Loader"
+  unarchive:
+    src: "http://downloads.zend.com/guard/7.0.0/zend-loader-php5.6-linux-x86_64_update1.tar.gz"
+    dest: "/opt/zend-guard-loader"
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+
+- name: "Disable default opcache module"
+  command: "/usr/sbin/phpdismod -v {{ php.version }} -s ALL opcache"
+  notify: restart apache
+
+- name: "Create PHP ini for ZGL config"
+  template:
+    src: zend-guard-loader.ini.j2
+    dest: /etc/php/{{ php.version }}/mods-available/zend-guard-loader.ini
+
+- name: "Enable PHP ZGL config"
+  command: "/usr/sbin/phpenmod -v {{ php.version }} -s ALL zend-guard-loader"
+  args:
+    creates: "/etc/php/{{ php.version }}/apache2/conf.d/10-zend-guard-loader.ini"
+  notify: restart apache
