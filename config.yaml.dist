@@ -1,13 +1,14 @@
-
-hostname: symfony.vm
+hostname: project.vm
+# CIDR for the network. Ensure that the network contains enough IP addresses!
 network-ip: 192.168.42.48/29
 
 # This is based on the path of config.yaml
 customPlaybook: ansible/awesome-playbook.yml
 
 groups:
-  backend-web: ["apache"]
-  backend-db: ["mysql"]
+  web: ["apache"]
+  database: ["mysql"]
+  elasticsearch: ["search"]
 
 # If you want to split your config file, you can specify multiple additional config files:
 #imports:
@@ -16,7 +17,6 @@ groups:
 
 nodes:
   apache:
-    type: httpd
     primary: true
     useSharedFolder: true
     vhostSymlinkTarget: "/project"
@@ -26,6 +26,7 @@ nodes:
       shared-folders:
         ../projekt: "/project"
     php:
+      # Only PHP 5.6 and up are supported
       version: 7.1
       configs:
         date:
@@ -41,7 +42,6 @@ nodes:
           profiler_enable_trigger: 1
     docroot: public
   mysql:
-    type: mysql
     vm:
       memory: 2048
       cpus: 2
@@ -54,9 +54,15 @@ nodes:
       # Use tilde (~) to skip dump import (e.g. you have no dump)
       project2: ~
   search:
-    type: elastic
     vm:
       memory: 1024
-      cpus: 2
+      cpus: 1
     elasticsearch:
+      # Supported ES versions:
+      #   2.1.0, 2.1.1
+      #   2.2.0, 2.2.1
+      #   2.3.0, 2.3.1, 2.3.2, 2.3.3, 2.3.4
+      #   2.4.1
+      #   5.1.1
+      #   5.4.0, 5.4.3
       version: "5.4.3"
