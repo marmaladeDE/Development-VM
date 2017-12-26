@@ -54,10 +54,12 @@ Vagrant.configure("2") do |config|
     hostIps = {}
 
     configValues['nodes'].each do |nodeName, nodeConfig|
-        if nodeConfig['type'] == 'mysql'
+        if mysqlIp == "" && configValues['groups']['database'].include?(nodeName)
             mysqlIp = availableIps[ipIndex]
         end
+
         hostIps[nodeName] = availableIps[ipIndex]
+        puts nodeName + ": " + availableIps[ipIndex]
         ipIndex += 1
     end
 
