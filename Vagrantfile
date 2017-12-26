@@ -59,7 +59,6 @@ Vagrant.configure("2") do |config|
         end
 
         hostIps[nodeName] = availableIps[ipIndex]
-        puts nodeName + ": " + availableIps[ipIndex]
         ipIndex += 1
     end
 
