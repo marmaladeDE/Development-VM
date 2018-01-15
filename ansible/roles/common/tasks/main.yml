@@ -9,3 +9,22 @@
     regexp: '^(UMASK)\s+022$'
     line: '\1 002'
     backrefs: yes
+
+- name: "Change user group"
+  user:
+    name: "{{ ansible_ssh_user }}"
+    group: "www-data"
+    groups:
+      - "{{ ansible_ssh_user }}"
+      - "www-data"
+      - "adm"
+      - "audio"
+      - "cdrom"
+      - "dialout"
+      - "dip"
+      - "floppy"
+      - "lxd"
+      - "netdev"
+      - "plugdev"
+      - "sudo"
+      - "video"
