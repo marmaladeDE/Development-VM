@@ -21,10 +21,9 @@
     group: ubuntu
 
 - name: "Install dependencies"
-  shell: npm install
-  args:
-    chdir: "/opt/elasticsearch-head"
-    creates: "/opt/elasticsearch-head/node_modules"
+  npm:
+    path: "/opt/elasticsearch-head"
+    state: present
 
 - name: "Creating systemd service"
   template:
@@ -36,6 +35,7 @@
     name: es-head
     state: started
     daemon_reload: yes
+    enabled: yes
 
 - name: "Replace default ES host"
   replace:
