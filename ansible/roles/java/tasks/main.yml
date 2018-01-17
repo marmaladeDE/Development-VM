@@ -1,21 +1,27 @@
-- name: 'Add "WebUpd8" Team Java PPA'
-  apt_repository:
-    repo: 'ppa:webupd8team/java'
+#- name: 'Add "WebUpd8" Team Java PPA'
+#  apt_repository:
+#    repo: 'ppa:webupd8team/java'
+#    update_cache: yes
+#
+#- name: "Accept Oracle license"
+#  debconf:
+#    name: 'oracle-java8-installer'
+#    question: "shared/accepted-oracle-license-v1-1"
+#    value: "true"
+#    vtype: select
+#
+#- name: "Install Java 8"
+#  apt:
+#    name: 'oracle-java8-installer'
+#    update_cache: yes
+#    state: installed
+#
+#- name: "Set default Java"
+#  apt:
+#    name: 'oracle-java8-set-default'
+#    state: installed
 
-- name: "Accept Oracle license"
-  debconf:
-    name: 'oracle-java8-installer'
-    question: "shared/accepted-oracle-license-v1-1"
-    value: "true"
-    vtype: select
-
-- name: "Install Java 8"
+- name: 'Install OpenJDK 8'
   apt:
-    name: 'oracle-java8-installer'
+    name: ['openjdk-8-jdk', 'openjdk-8-jre']
     state: installed
-
-- name: "Set default Java"
-  apt:
-    name: 'oracle-java8-set-default'
-    state: installed
-
