@@ -82,6 +82,16 @@ Vagrant.configure("2") do |config|
         end
     end
 
+    esOnWebNode = false
+    if ansible_groups.has_key?('web') && ansible_groups.has_key?('elasticsearch')
+        ansible_groups['web'].each do |groupHost|
+            if ansible_groups['elasticsearch'].include?(groupHost)
+                esOnWebNode = true
+                break
+            end
+        end
+    end
+
     singleNodeMode = (configValues['nodes'].length == 1)
 
     configValues['nodes'].each do |nodeName, nodeConfig|
@@ -143,11 +153,12 @@ Vagrant.configure("2") do |config|
                     "memory_factor": {
                         "myisam": singleNodeMode ? 0.125 : 0.1875,
                         "innodb": singleNodeMode ? 0.375 : 0.5625
-                    }
+                    },
                 },
                 "config_path": vmConfigPath || "/vagrant",
                 "elasticsearch_memory_factor": singleNodeMode ? 0.125 : 0.5,
-                "is_single_node_mode": singleNodeMode
+                "is_single_node_mode": singleNodeMode,
+                "elastic_is_on_web_node": esOnWebNode
             }
 
             ansible_extra_vars.deep_merge!(nodeConfig)

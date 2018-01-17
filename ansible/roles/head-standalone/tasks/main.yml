@@ -7,8 +7,8 @@
 
 - name: "Include nginx-proxy tasks"
   include_tasks: nginx.yml
-  when: not is_single_node_mode
+  when: not elastic_is_on_web_node
 
 - name: "Include apache-proxy tasks"
   include_tasks: apache-vhost.yml
-  when: is_single_node_mode
+  when: elastic_is_on_web_node
