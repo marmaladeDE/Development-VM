@@ -48,7 +48,7 @@
   when:
     - databases is defined
 
-- name: "Import DB dumps"
+- name: "Import DB dump(s)"
   include_tasks: real_import.yml
   with_dict: "{{databases}}"
   loop_control:

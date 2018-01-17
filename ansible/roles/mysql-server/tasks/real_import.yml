@@ -1,4 +1,4 @@
-- name: "Importing dump files for database"
+- name: "Importing dump file(s) for database"
   mysql_db:
     target: "{{config_path}}/{{item}}"
     name: "{{db.key}}"
