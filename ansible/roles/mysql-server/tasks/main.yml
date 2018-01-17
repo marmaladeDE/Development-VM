@@ -24,6 +24,13 @@
     line: "innodb_buffer_pool_size = {{ (vm.memory * mysql.memory_factor.innodb)|int }}M"
   notify: restart mysql
 
+- name: "Set SQL mode"
+  lineinfile:
+    path: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+    regexp: "^sql-mode=$"
+    line: "sql-mode="
+  notify: restart mysql
+
 - name: "Create MySQL user root@{{ mysql.network_mask }}"
   mysql_user:
     name: root
