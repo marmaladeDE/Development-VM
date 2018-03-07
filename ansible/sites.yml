@@ -20,9 +20,14 @@
   roles:
     - { role: swapfile, swapfile_location: /tmp/swapfile, swapfile_size: "{{vm.memory}}M", swapfile_swappiness: 10, when: not is_single_node_mode }
     - java
+    - nodejs
     - head-standalone
     - elasticsearch
 
 - hosts: java
   roles:
     - java
+
+- hosts: nodejs
+  roles:
+    - nodejs
