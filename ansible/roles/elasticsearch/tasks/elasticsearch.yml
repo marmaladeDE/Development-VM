@@ -6,22 +6,22 @@
   apt_repository:
     repo: "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main"
   when:
-    - elasticsearch.version|version_compare('2.0', '>=')
-    - elasticsearch.version|version_compare('5.0', '<')
+    - elasticsearch.version is version_compare('2.0', '>=')
+    - elasticsearch.version is version_compare('5.0', '<')
 
 - name: "Add Elasticsearch 5.x repository"
   apt_repository:
     repo: "deb https://artifacts.elastic.co/packages/5.x/apt stable main"
   when:
-    - elasticsearch.version|version_compare('5.0', '>=')
-    - elasticsearch.version|version_compare('6.0', '<')
+    - elasticsearch.version is version_compare('5.0', '>=')
+    - elasticsearch.version is version_compare('6.0', '<')
 
 - name: "Add Elasticsearch 6.x repository"
   apt_repository:
     repo: "deb https://artifacts.elastic.co/packages/6.x/apt stable main"
   when:
-    - elasticsearch.version|version_compare('6.0', '>=')
-    - elasticsearch.version|version_compare('7.0', '<')
+    - elasticsearch.version is version_compare('6.0', '>=')
+    - elasticsearch.version is version_compare('7.0', '<')
 
 - name: "Install Elasticsearch"
   apt:
@@ -68,7 +68,7 @@
     line: "-Xms{{ (vm.memory * elasticsearch_memory_factor)|int }}M"
   notify: restart elasticsearch
   when:
-    - elasticsearch.version|version_compare('5.0', '>=')
+    - elasticsearch.version is version_compare('5.0', '>=')
 
 - name: "Set max heap size"
   lineinfile:
@@ -77,4 +77,4 @@
     line: "-Xmx{{ (vm.memory * elasticsearch_memory_factor)|int }}M"
   notify: restart elasticsearch
   when:
-    - elasticsearch.version|version_compare('5.0', '>=')
+    - elasticsearch.version is version_compare('5.0', '>=')
