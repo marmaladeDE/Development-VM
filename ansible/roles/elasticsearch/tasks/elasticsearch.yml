@@ -26,7 +26,7 @@
 - name: "Install Elasticsearch"
   apt:
     name: "elasticsearch={{elasticsearch.version}}"
-    state: installed
+    state: present
 
 - name: "Stick ES version"
   dpkg_selections:

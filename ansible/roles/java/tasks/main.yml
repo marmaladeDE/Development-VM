@@ -14,14 +14,14 @@
 #  apt:
 #    name: 'oracle-java8-installer'
 #    update_cache: yes
-#    state: installed
+#    state: present
 #
 #- name: "Set default Java"
 #  apt:
 #    name: 'oracle-java8-set-default'
-#    state: installed
+#    state: present
 
 - name: 'Install OpenJDK 8'
   apt:
     name: ['openjdk-8-jdk', 'openjdk-8-jre']
-    state: installed
+    state: present

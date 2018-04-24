@@ -1,7 +1,7 @@
 - name: "Install nginx"
   apt:
     name: "nginx"
-    state: installed
+    state: present
 
 - name: "Remove default vhost"
   file:
