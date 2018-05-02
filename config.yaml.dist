@@ -40,6 +40,10 @@ nodes:
           var_display_max_data: 2560
           var_display_max_depth: 200
           profiler_enable_trigger: 1
+          collect_params: 1
+          trace_enable_trigger: 1
+          trace_format: 2
+          trace_output_name: "trace.%R.%t"
     docroot: public
   mysql:
     vm:
