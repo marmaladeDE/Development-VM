@@ -34,6 +34,12 @@
     - "{{ php.version }}-zip"
   notify: restart apache
 
+- name: "Install additional PHP extensions"
+  apt: name={{item}} state=present
+  with_items: "{{php.extensions}}"
+  when: php.extensions is defined
+  notify: restart apache
+
 - name: "Write custom PHP config"
   template:
     src: php-custom.ini.j2

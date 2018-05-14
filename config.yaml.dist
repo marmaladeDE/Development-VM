@@ -28,6 +28,9 @@ nodes:
     php:
       # Only PHP 5.6 and up are supported
       version: 7.1
+      # You can add your own required PHP extensions:
+      extensions:
+        - php-ast
       configs:
         date:
           timezone: Europe/Berlin
