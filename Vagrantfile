@@ -105,8 +105,32 @@ Vagrant.configure("2") do |config|
             node.vm.network "private_network", ip: hostIps[nodeName], netmask: netmask
 
             if nodeConfig['vm'].has_key?('shared-folders')
-                nodeConfig['vm']['shared-folders'].each do |hostPath, guestPath|
-                    node.vm.synced_folder hostPath, guestPath
+                nodeConfig['vm']['shared-folders'].each do |hostPath, options|
+                    if options.kind_of?(String)
+                        node.vm.synced_folder hostPath, options
+                    elsif options['type'] == 'rsync'
+                        owner = options.has_key?('owner') ? options['owner'] : "vagrant"
+                        group = options.has_key?('group') ? options['group'] : "www-data"
+
+                        excludes = [".git/", ".idea/", "vm/"]
+                        if options.has_key?('excludes')
+                          excludes += options['excludes']
+                        end
+
+                        node.vm.synced_folder hostPath, options['target'],
+                            type: "rsync",
+                            owner: owner,
+                            group: group,
+                            rsync__exclude: excludes,
+                            rsync__args: [
+                                "--verbose",
+                                "--archive",
+                                "--delete",
+                                "-z",
+                                "--copy-links",
+                                "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
+                            ]
+                    end
                 end
             end
 

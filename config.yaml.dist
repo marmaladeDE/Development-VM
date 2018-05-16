@@ -24,7 +24,13 @@ nodes:
       memory: 1024
       cpus: 1
       shared-folders:
-        ../projekt: "/project"
+        ../project:
+          target: "/srv/project.vm"
+          type: "rsync"
+          owner: vagrant
+          group: www-data
+          excludes:
+            - web/tmp/
     php:
       # Only PHP 5.6 and up are supported
       version: 7.1
