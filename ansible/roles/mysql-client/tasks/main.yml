@@ -7,3 +7,4 @@
   template:
     src: .my.cnf.j2
     dest: "/home/{{ ssh_user }}/.my.cnf"
+    owner: "{{ ssh_user }}"
