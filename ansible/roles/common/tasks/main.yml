@@ -28,3 +28,8 @@
       - "plugdev"
       - "sudo"
       - "video"
+
+- name: "Ensure locale is generated"
+  locale_gen:
+    name: "de_DE.UTF-8"
+    state: present
