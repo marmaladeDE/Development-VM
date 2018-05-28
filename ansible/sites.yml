@@ -31,3 +31,7 @@
 - hosts: nodejs
   roles:
     - nodejs
+
+- hosts: oxid
+  roles:
+    - oxid
