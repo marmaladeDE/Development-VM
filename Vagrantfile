@@ -170,7 +170,7 @@ Vagrant.configure("2") do |config|
             ansible_extra_vars = {
                 "hostname": node.vm.hostname,
                 "vm_ip": hostIps[nodeName],
-                "ssh_user": nodeConfig.has_key?('ssh_user') ? nodeConfig['ssh_user'] : "ubuntu",
+                "ssh_user": nodeConfig.has_key?('ssh_user') ? nodeConfig['ssh_user'] : "vagrant",
                 "mysql": {
                     "server_ip": mysqlIp,
                     "network_mask": mysqlNetworkMask,
