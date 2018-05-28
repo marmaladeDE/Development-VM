@@ -1,0 +1,7 @@
+- name: "Create bash aliases"
+  lineinfile:
+    path: "/home/{{ ssh_user }}/.bash_aliases"
+    regexp: '^alias clear-tmp='
+    line: "alias clear-tmp='sudo find /srv/{{ hostname }}/{{ docroot }}/tmp -type f -delete'"
+    create: true
+    owner: "{{ ssh_user }}"

@@ -50,3 +50,11 @@
   args:
     creates: "/etc/php/{{ php.version }}/apache2/conf.d/85-custom.ini"
   notify: restart apache
+
+- name: "Create 'xdebug' alias"
+  lineinfile:
+    path: "/home/{{ ssh_user }}/.bash_aliases"
+    regexp: '^alias xdebug='
+    line: "alias xdebug='XDEBUG_CONFIG=\"idekey=42\" php'"
+    create: true
+    owner: "{{ ssh_user }}"

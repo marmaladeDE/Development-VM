@@ -7,3 +7,11 @@
 
 - name: "Include apache vhost tasks"
   include_tasks: vhost.yml
+
+- name: "Create 'asWeb' alias"
+  lineinfile:
+    path: "/home/{{ ssh_user }}/.bash_aliases"
+    regexp: '^alias asWeb='
+    line: "alias asWeb='sudo sudo -u www-data -g www-data'"
+    create: true
+    owner: "{{ ssh_user }}"
