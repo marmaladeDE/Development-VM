@@ -145,9 +145,11 @@ Vagrant.configure("2") do |config|
                     nodeConfig['aliases'] = Array.new
                 end
 
-                hostInESGroup = configValues['groups']['elasticsearch'].index(nodeName)
-                if configValues['groups'].has_key?('elasticsearch') && !hostInESGroup.nil?
-                    nodeConfig['aliases'].push("head.#{hostname}")
+                if configValues['groups'].has_key?('elasticsearch')
+                    hostInESGroup = configValues['groups']['elasticsearch'].index(nodeName)
+                    if !hostInESGroup.nil?
+                        nodeConfig['aliases'].push("head.#{hostname}")
+                    end
                 end
             end
 
