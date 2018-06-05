@@ -44,6 +44,7 @@
   template:
     src: php-custom.ini.j2
     dest: /etc/php/{{ php.version }}/mods-available/custom.ini
+  notify: restart apache
 
 - name: "Enable custom PHP config"
   command: "/usr/sbin/phpenmod -v {{ php.version }} -s ALL custom"
