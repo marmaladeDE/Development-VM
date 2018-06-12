@@ -18,6 +18,7 @@ groups:
 nodes:
   apache:
     primary: true
+    docroot: public
     useSharedFolder: true
     vhostSymlinkTarget: "/project"
     vm:
@@ -38,6 +39,15 @@ nodes:
       extensions:
         - php-ast
       configs:
+        # Basic PHP settings (they won't be prefixed)
+        php:
+          display_errors: on
+          post_max_size: 32M
+          upload_max_filesize: 32M
+          max_input_vars: 1500
+          max_execution_time: 300
+          memory_limit: 256M
+          always_populate_raw_post_data: -1
         date:
           timezone: Europe/Berlin
         xdebug:
@@ -53,7 +63,6 @@ nodes:
           trace_enable_trigger: 1
           trace_format: 2
           trace_output_name: "trace.%R.%t"
-    docroot: public
   mysql:
     vm:
       memory: 2048

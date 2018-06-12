@@ -1,15 +1,14 @@
 ; THIS FILE IS MANAGED BY ANSIBLE. DO NOT EDIT IT!
 ; priority=85
 
-display_errors = on
-post_max_size = 32M
-upload_max_filesize = 32M
-memory_limit = 128M
-max_execution_time = 300
 
 {% for section, config in php.configs.iteritems() %}
 [{{ section }}]
 {% for key, value in config.iteritems() %}
+{% if "php" == section %}
+{{ key }} = {{ value }}
+{% else %}
 {{section}}.{{ key }} = {{ value }}
+{% endif %}
 {% endfor %}
 {% endfor %}
