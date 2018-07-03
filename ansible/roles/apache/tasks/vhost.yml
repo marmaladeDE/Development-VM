@@ -9,7 +9,7 @@
   file:
     path: /srv/{{ hostname }}
     state: absent
-  when: useSharedFolder and vhostSymlinkTarget is defined
+  when: useSharedFolder is defined and useSharedFolder and vhostSymlinkTarget is defined
 
 - name: "Create docroot"
   file:
@@ -18,14 +18,14 @@
     group: www-data
     mode: 0775
     state: directory
-  when: not useSharedFolder or vhostSymlinkTarget is undefined
+  when: useSharedFolder is undefined or not useSharedFolder or vhostSymlinkTarget is undefined
 
 - name: "Symlink to shared folder"
   file:
     dest: /srv/{{ hostname }}
     src: "{{ vhostSymlinkTarget }}"
     state: link
-  when: useSharedFolder and vhostSymlinkTarget is defined
+  when: useSharedFolder is defined and useSharedFolder and vhostSymlinkTarget is defined
 
 - name: "Disable default VHost"
   file:
