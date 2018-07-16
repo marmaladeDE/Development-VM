@@ -27,6 +27,7 @@
   apt:
     name: "elasticsearch={{elasticsearch.version}}"
     state: present
+    force: yes
 
 - name: "Stick ES version"
   dpkg_selections:

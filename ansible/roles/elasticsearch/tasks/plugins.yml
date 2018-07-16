@@ -9,7 +9,7 @@
     creates: "/usr/share/elasticsearch/plugins/decompound/"
   notify: restart elasticsearch
   when:
-    - elasticsearch.version|version_compare('6.0', '<')
+    - elasticsearch.version is version_compare('6.0', '<')
 
 - name: "Enable Elasticsearch at boot time"
   systemd:
