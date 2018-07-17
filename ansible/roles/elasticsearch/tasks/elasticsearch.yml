@@ -79,3 +79,17 @@
   notify: restart elasticsearch
   when:
     - elasticsearch.version is version_compare('5.0', '>=')
+
+- name: "Create backup dir"
+  file:
+    path: "/var/lib/elasticsearch/backups"
+    state: directory
+    owner: elasticsearch
+    group: elasticsearch
+
+- name: "Set backup dir"
+  lineinfile:
+    path: "/etc/elasticsearch/elasticsearch.yml"
+    regexp: "^path.repo:"
+    line: 'path.repo: ["/var/lib/elasticsearch/backups"]'
+  notify: restart elasticsearch

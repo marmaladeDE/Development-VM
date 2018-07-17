@@ -136,6 +136,10 @@ Vagrant.configure("2") do |config|
                 end
             end
 
+            if File.directory?("#{dir}/../transfer")
+                node.vm.synced_folder "#{dir}/../transfer", "/transfer"
+            end
+
             if nodeConfig['vm'].has_key?('port-forwards')
                 nodeConfig['vm']['port-forwards'].each do |hostPort, guestPort|
                     node.vm.network :forwarded_port, host: hostPort, guest: guestPort
