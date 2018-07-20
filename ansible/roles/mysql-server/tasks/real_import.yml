@@ -1,7 +1,6 @@
 - name: "Check if DB exists"
-  shell: "mysql -sNe 'SHOW DATABASES'|grep {{ db.key }}"
+  shell: "mysql -NBAse 'SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \"{{ db.key }}\"'"
   register: db_status
-  failed_when: db_status.rc == 2
 
 - name: "Importing dump file(s) for database"
   mysql_db:
@@ -9,4 +8,4 @@
     name: "{{db.key}}"
     state: import
   with_items: "{{db.value}}"
-  when: db_status.rc is defined and db_status.rc == 1
+  when: db_status.stdout|trim|int == 0
