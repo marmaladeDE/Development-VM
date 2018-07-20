@@ -133,6 +133,9 @@ Vagrant.configure("2") do |config|
                                 "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
                             ]
                     end
+                    if !options.kind_of?(String)
+                        nodeConfig['useSharedFolder'] = false
+                    end
                 end
             end
 
