@@ -119,7 +119,8 @@ Vagrant.configure("2") do |config|
                           excludes += options['excludes']
                         end
 
-                        node.vm.synced_folder hostPath, options['target'],
+                        target = options['target'].gsub! '%HOSTNAME%', hostname
+                        node.vm.synced_folder hostPath, target,
                             type: "rsync",
                             owner: owner,
                             group: group,
