@@ -21,9 +21,10 @@
     group: ubuntu
 
 - name: "Install dependencies"
-  npm:
-    path: "/opt/elasticsearch-head"
-    state: present
+  shell: npm i
+  args:
+    chdir: "/opt/elasticsearch-head/"
+    creates: "/opt/elasticsearch-head/node_modules/"
 
 - name: "Creating systemd service"
   template:
