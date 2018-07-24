@@ -11,8 +11,7 @@
     groups: [ "{{ ssh_user }}" ]
 
 - name: "Force IPv4 binding"
-  lineinfile:
-    path: /etc/apache2/ports.conf
-    regexp: "^Listen "
-    insertafter: "^#Listen "
-    line: "Listen {{vm_ip}}:80"
+  template:
+    src: ports.conf.j2
+    dest: /etc/apache2/ports.conf
+  notify: restart apache
