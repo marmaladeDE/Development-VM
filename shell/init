@@ -19,9 +19,6 @@ fi
 if [ ${PROVISION_REQUIRED} -gt 0 ]; then
     echo "Update apt cache"
     apt-get -qq -y update > /dev/null
-
-    echo "Installing updates"
-    apt-get -qq -y upgrade > /dev/null
 fi
 
 if [ ${PROVISION_REQUIRED} -gt 1 ]; then
