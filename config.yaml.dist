@@ -18,6 +18,8 @@ groups:
 nodes:
   apache:
     primary: true
+    # Prevents starting this VM on "vagrant up".
+    autostart: false
     docroot: public
     useSharedFolder: true
     vhostSymlinkTarget: "/project"

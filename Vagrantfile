@@ -106,6 +106,8 @@ Vagrant.configure("2") do |config|
             node.vm.hostname = isPrimaryNode ? hostname : "#{nodeName}.#{hostname}"
             node.vm.network "private_network", ip: hostIps[nodeName], netmask: netmask
 
+            node.autostart = (nodeConfig.has_key?('autostart') ? nodeConfig['autostart'] : true)
+
             if nodeConfig['vm'].has_key?('shared-folders')
                 nodeConfig['vm']['shared-folders'].each do |hostPath, options|
                     if options.kind_of?(String)
