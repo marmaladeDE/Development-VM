@@ -98,15 +98,14 @@ Vagrant.configure("2") do |config|
 
     configValues['nodes'].each do |nodeName, nodeConfig|
         isPrimaryNode = (nodeConfig.has_key?('primary') ? nodeConfig['primary'] : false)
+        autostart = (nodeConfig.has_key?('autostart') ? nodeConfig['autostart'] : true)
 
-        config.vm.define nodeName, primary: isPrimaryNode do |node|
+        config.vm.define nodeName, primary: isPrimaryNode, autostart: autostart do |node|
             node.vm.box = nodeConfig['vm']['box'] || "ubuntu/xenial64"
             node.vm.usable_port_range = (10200..10500)
 
             node.vm.hostname = isPrimaryNode ? hostname : "#{nodeName}.#{hostname}"
             node.vm.network "private_network", ip: hostIps[nodeName], netmask: netmask
-
-            node.autostart = (nodeConfig.has_key?('autostart') ? nodeConfig['autostart'] : true)
 
             if nodeConfig['vm'].has_key?('shared-folders')
                 nodeConfig['vm']['shared-folders'].each do |hostPath, options|
