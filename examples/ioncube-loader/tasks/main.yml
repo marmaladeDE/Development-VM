@@ -7,8 +7,8 @@
 
 - name: Copy Ioncube Loader to PHP extensions dir
   copy:
-    creates: /usr/lib/php/20160303/ioncube_loader_lin_7.1.so
-    src: /tmp/ioncube/ioncube_loader_lin_7.1.so
+    creates: /usr/lib/php/20160303/ioncube_loader_lin_{{ php.version }}.so
+    src: /tmp/ioncube/ioncube_loader_lin_{{ php.version }}.so
     dest: /usr/lib/php/20160303/
     remote_src: yes
 
@@ -18,6 +18,6 @@
     dest: /etc/php/{{ php.version }}/mods-available/ioncube.ini
 
 - name: Activating Ioncube Loader
-  shell: phpenmod -s ALL -v 7.1 ioncube
+  shell: phpenmod -s ALL -v {{ php.version }} ioncube
   notify: restart apache
 
