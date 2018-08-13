@@ -1,4 +1,0 @@
----
-- hosts: web
-  roles:
-    - zend-guard-loader

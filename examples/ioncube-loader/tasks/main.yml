@@ -1,0 +1,23 @@
+- name: Download Ioncube Loader
+  unarchive:
+    creates: /tmp/ioncube
+    src: https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy Ioncube Loader to PHP extensions dir
+  copy:
+    creates: /usr/lib/php/20160303/ioncube_loader_lin_7.1.so
+    src: /tmp/ioncube/ioncube_loader_lin_7.1.so
+    dest: /usr/lib/php/20160303/
+    remote_src: yes
+
+- name: Create Ioncube config
+  template:
+    src: ioncube.ini.j2
+    dest: /etc/php/{{ php.version }}/mods-available/ioncube.ini
+
+- name: Activating Ioncube Loader
+  shell: phpenmod -s ALL -v 7.1 ioncube
+  notify: restart apache
+
