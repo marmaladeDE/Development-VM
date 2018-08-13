@@ -5,11 +5,15 @@
     dest: /tmp
     remote_src: yes
 
+- name: Create ioncube dir
+  file:
+    path: /opt/ioncube
+    state: directory
+
 - name: Copy Ioncube Loader to PHP extensions dir
   copy:
-    creates: /usr/lib/php/20160303/ioncube_loader_lin_{{ php.version }}.so
     src: /tmp/ioncube/ioncube_loader_lin_{{ php.version }}.so
-    dest: /usr/lib/php/20160303/
+    dest: /opt/ioncube/
     remote_src: yes
 
 - name: Create Ioncube config
