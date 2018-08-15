@@ -115,7 +115,7 @@ Vagrant.configure("2") do |config|
                         owner = options.has_key?('owner') ? options['owner'] : "vagrant"
                         group = options.has_key?('group') ? options['group'] : "www-data"
 
-                        excludes = [".git/", ".idea/", "vm/"]
+                        excludes = ["/.git/", "/.idea/", "/vm/"]
                         if options.has_key?('excludes')
                           excludes += options['excludes']
                         end
