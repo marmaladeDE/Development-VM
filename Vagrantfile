@@ -115,10 +115,20 @@ Vagrant.configure("2") do |config|
                         owner = options.has_key?('owner') ? options['owner'] : "vagrant"
                         group = options.has_key?('group') ? options['group'] : "www-data"
 
-                        excludes = ["/.git/", "/.idea/", "/vm/"]
+                        excludes = ["/.git", "/.idea", "/vm"]
                         if options.has_key?('excludes')
                           excludes += options['excludes']
                         end
+
+                        filters = excludes.map { |e| "--filter=protect #{e}/**/*" }
+
+                        rsyncArgs = [
+                            "--archive",
+                            "--delete",
+                            "--compress",
+                            "--copy-links",
+                            "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
+                        ] + filters
 
                         target = options['target'].gsub '%HOSTNAME%', hostname
                         node.vm.synced_folder hostPath, target,
@@ -126,14 +136,7 @@ Vagrant.configure("2") do |config|
                             owner: owner,
                             group: group,
                             rsync__exclude: excludes,
-                            rsync__args: [
-                                "--verbose",
-                                "--archive",
-                                "--delete",
-                                "-z",
-                                "--copy-links",
-                                "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
-                            ]
+                            rsync__args: rsyncArgs
                     end
                     if !options.kind_of?(String)
                         nodeConfig['useSharedFolder'] = false
