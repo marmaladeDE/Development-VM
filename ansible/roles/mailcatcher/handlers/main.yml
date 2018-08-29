@@ -1,0 +1,7 @@
+# handlers file for mailcatcher
+---
+- name: restart mailcatcher
+  service:
+    name: mailcatcher
+    state: restarted
+  when: service_default_state | default('started') == 'started'

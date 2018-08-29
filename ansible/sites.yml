@@ -35,3 +35,15 @@
 - hosts: oxid
   roles:
     - oxid
+
+- hosts: e-mail
+  roles:
+    - mailcatcher
+  vars:
+    mailcatcher_options:
+      ip: 0.0.0.0
+      smtp-port: 1025
+      http-port: 1080
+    mailcatcher_user: root
+    mailcatcher_group: root
+    mailcatcher_groups: ["root"]
