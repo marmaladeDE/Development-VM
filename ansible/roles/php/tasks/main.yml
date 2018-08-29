@@ -59,3 +59,8 @@
     line: "alias xdebug='XDEBUG_CONFIG=\"idekey=42\" php'"
     create: true
     owner: "{{ ssh_user }}"
+
+- name: "Update alternatives"
+  alternatives:
+    name: php
+    path: "/usr/bin/php{{ php.version }}"
