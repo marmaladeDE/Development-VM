@@ -126,7 +126,6 @@ Vagrant.configure("2") do |config|
                             "--archive",
                             "--delete",
                             "--compress",
-                            "--copy-links",
                             "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
                         ] + filters
 
