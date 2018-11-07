@@ -129,7 +129,7 @@ Vagrant.configure("2") do |config|
                             "--chmod=Dug=rwx,Do=rx,Fug=rw,Fo=r"
                         ] + filters
 
-                        target = options['target'].gsub '%HOSTNAME%', hostname
+                        target = options['target'].gsub '%HOSTNAME%', node.vm.hostname
                         node.vm.synced_folder hostPath, target,
                             type: "rsync",
                             owner: owner,
