@@ -1,42 +1,44 @@
 ---
 - name: "Install PHP {{ php.version }}"
-  apt: name=php{{item}} state=present
-  with_items:
-    - "{{ php.version }}"
-    - "{{ php.version }}-bcmath"
-    - "{{ php.version }}-bz2"
-    - "{{ php.version }}-cli"
-    - "{{ php.version }}-curl"
-    - "{{ php.version }}-dev"
-    - "{{ php.version }}-fileinfo"
-    - "{{ php.version }}-gd"
-    - "{{ php.version }}-gmagick"
-    - "{{ php.version }}-iconv"
-    - "{{ php.version }}-intl"
-    - "{{ php.version }}-json"
-    - "{{ php.version }}-mbstring"
-    - "{{ php.version }}-mysql"
-    - "{{ php.version }}-opcache"
-    - "{{ php.version }}-pdo"
-    - "{{ php.version }}-pdo-mysql"
-    - "{{ php.version }}-phar"
-    - "{{ php.version }}-posix"
-    - "{{ php.version }}-recode"
-    - "{{ php.version }}-sockets"
-    - "-sodium"
-    - "{{ php.version }}-tokenizer"
-    - "{{ php.version }}-xdebug"
-    - "{{ php.version }}-xml"
-    - "{{ php.version }}-xmlreader"
-    - "{{ php.version }}-xmlwriter"
-    - "{{ php.version }}-xsl"
-    - "{{ php.version }}-yaml"
-    - "{{ php.version }}-zip"
+  apt:
+    name:
+      - "php{{ php.version }}"
+      - "php{{ php.version }}-bcmath"
+      - "php{{ php.version }}-bz2"
+      - "php{{ php.version }}-cli"
+      - "php{{ php.version }}-curl"
+      - "php{{ php.version }}-dev"
+      - "php{{ php.version }}-fileinfo"
+      - "php{{ php.version }}-gd"
+      - "php{{ php.version }}-gmagick"
+      - "php{{ php.version }}-iconv"
+      - "php{{ php.version }}-intl"
+      - "php{{ php.version }}-json"
+      - "php{{ php.version }}-mbstring"
+      - "php{{ php.version }}-mysql"
+      - "php{{ php.version }}-opcache"
+      - "php{{ php.version }}-pdo"
+      - "php{{ php.version }}-pdo-mysql"
+      - "php{{ php.version }}-phar"
+      - "php{{ php.version }}-posix"
+      - "php{{ php.version }}-recode"
+      - "php{{ php.version }}-sockets"
+      - "php-sodium"
+      - "php{{ php.version }}-tokenizer"
+      - "php{{ php.version }}-xdebug"
+      - "php{{ php.version }}-xml"
+      - "php{{ php.version }}-xmlreader"
+      - "php{{ php.version }}-xmlwriter"
+      - "php{{ php.version }}-xsl"
+      - "php{{ php.version }}-yaml"
+      - "php{{ php.version }}-zip"
+    state: present
   notify: restart apache
 
 - name: "Install additional PHP extensions"
-  apt: name={{item}} state=present
-  with_items: "{{php.extensions}}"
+  apt:
+    name: "{{php.extensions}}"
+    state: present
   when: php.extensions is defined
   notify: restart apache
 
@@ -56,7 +58,7 @@
   lineinfile:
     path: "/home/{{ ssh_user }}/.bash_aliases"
     regexp: '^alias xdebug='
-    line: "alias xdebug='XDEBUG_CONFIG=\"idekey=42\" php'"
+    line: "alias xdebug='XDEBUG_CONFIG=\"idekey=42\" PHP_IDE_CONFIG=\"serverName={{ hostname }}\" php'"
     create: true
     owner: "{{ ssh_user }}"
 
