@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+{% for proxy in proxies %}
+{% set vhost_alias = proxy.name ~ '.' ~ hostname %}
+<VirtualHost *:80>
+    ServerName {{ vhost_alias }}
+
+    ServerAdmin webmaster@mystand.vm
+
+    {% if proxy.ssl %}
+    SSLProxyEngine On
+    {% endif %}
+
+    ProxyPass "{{ proxy.source }}" "{{ proxy.target }}"
+    ProxyPassReverse "{{ proxy.source }}" "{{ proxy.target }}"
+
+    <Location "{{ proxy.source }}">
+    {% if proxy.auth is defined %}
+        {% if proxy.auth.type == 'http-basic' %}
+        RequestHeader set Authorization "Basic {{ (proxy.auth.username ~ ':' ~ proxy.auth.password) | b64encode }}"
+        {% endif %}
+    {% endif %}
+    </Location>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ vhost_alias }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ vhost_alias }}-access.log combined
+</VirtualHost>
+{% endfor %}
+# vim: syntax=apache ts=4 sw=4 sts=4 sr noet

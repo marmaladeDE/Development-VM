@@ -9,6 +9,7 @@
     - common-web
     - apache
     - php
+    - apache-proxy
     - mysql-client
 
 - hosts: database

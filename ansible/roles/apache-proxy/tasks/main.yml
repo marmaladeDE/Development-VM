@@ -1,0 +1,14 @@
+- name: "Adding proxies"
+  template:
+    src: apache-vhost.conf.j2
+    dest: /etc/apache2/sites-available/{{ hostname }}-proxies
+  notify: restart apache
+  when: proxies is defined
+
+- name: "Enable VHost"
+  file:
+    src: /etc/apache2/sites-available/{{ hostname }}-proxies
+    dest: /etc/apache2/sites-enabled/001-{{ hostname }}-proxies.conf
+    state: link
+  notify: restart apache
+  when: proxies is defined

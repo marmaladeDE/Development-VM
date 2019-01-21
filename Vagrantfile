@@ -167,6 +167,12 @@ Vagrant.configure("2") do |config|
             end
 
             if nodeConfig.has_key?('aliases') && Vagrant.has_plugin?('vagrant-hostsupdater')
+                host_aliases = nodeConfig['aliases']
+                if nodeConfig.has_key?('proxies')
+                    nodeConfig['proxies'].each do |proxy|
+                        host_aliases.push("#{proxy['name']}.#{node.vm.hostname}")
+                    end
+                end
                 node.hostsupdater.aliases = nodeConfig['aliases']
             end
 

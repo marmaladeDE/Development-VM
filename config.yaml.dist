@@ -65,6 +65,16 @@ nodes:
           trace_enable_trigger: 1
           trace_format: 2
           trace_output_name: "trace.%R.%t"
+    proxies:
+      - name: images
+        source: "/"
+        target: "https://stage.awesome.project/"
+        ssl: true
+        auth:
+          # Only HTTP basic authentication is supported, for now.
+          type: http-basic
+          username: ChangeMe
+          password: IAmNotSoSecure
   mysql:
     vm:
       memory: 2048
