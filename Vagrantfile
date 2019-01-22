@@ -196,8 +196,8 @@ Vagrant.configure("2") do |config|
                     "server_ip": mysqlIp,
                     "network_mask": mysqlNetworkMask,
                     "memory_factor": {
-                        "myisam": singleNodeMode ? 0.125 : 0.1875,
-                        "innodb": singleNodeMode ? 0.375 : 0.5625
+                        "myisam": singleNodeMode ? 0.1 : 0.2,
+                        "innodb": singleNodeMode ? 0.2 : 0.4
                     },
                 },
                 "config_path": vmConfigPath || "/vagrant",
