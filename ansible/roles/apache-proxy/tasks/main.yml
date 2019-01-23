@@ -1,11 +1,23 @@
-- name: "Enabling Apache Modules"
+- name: "Enabling Apache Module: ssl"
   apache2_module:
-    name:
-      - ssl
-      - proxy
-      - proxy_http
-      - proxy_html
+    name: ssl
     state: present
+
+- name: "Enabling Apache Module: proxy"
+  apache2_module:
+    name: proxy
+    state: present
+
+- name: "Enabling Apache Module: proxy_http"
+  apache2_module:
+    name: proxy_http
+    state: present
+
+- name: "Enabling Apache Module: proxy_html"
+  apache2_module:
+    name: proxy_html
+    state: present
+
 
 - name: "Adding proxies"
   template:
