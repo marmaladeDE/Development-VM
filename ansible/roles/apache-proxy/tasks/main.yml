@@ -1,3 +1,12 @@
+- name: "Enabling Apache Modules"
+  apache2_module:
+    name:
+      - ssl
+      - proxy
+      - proxy_http
+      - proxy_html
+    state: present
+
 - name: "Adding proxies"
   template:
     src: apache-vhost.conf.j2
